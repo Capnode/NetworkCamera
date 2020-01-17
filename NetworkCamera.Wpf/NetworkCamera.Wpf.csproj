@@ -1,0 +1,147 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <StartupObject>NetworkCamera.Wpf.App</StartupObject>
+    <ApplicationIcon>Resources\NetworkCamera.ico</ApplicationIcon>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Copyright></Copyright>
+    <Company>Capnode</Company>
+    <Product>NetworkCamera</Product>
+    <Authors />
+    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <CodeAnalysisRuleSet />
+    <NoWarn>NU1701;NU1702</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove=".editorconfig" />
+    <None Remove="Resources\Add.png" />
+    <None Remove="Resources\AddList.png" />
+    <None Remove="Resources\AddText.png" />
+    <None Remove="Resources\Checklist.png" />
+    <None Remove="Resources\Clone.png" />
+    <None Remove="Resources\Delete.png" />
+    <None Remove="Resources\Down.png" />
+    <None Remove="Resources\Download1.png" />
+    <None Remove="Resources\Download2.png" />
+    <None Remove="Resources\Download3.png" />
+    <None Remove="Resources\Exit.png" />
+    <None Remove="Resources\Export.png" />
+    <None Remove="Resources\Import.png" />
+    <None Remove="Resources\Info.png" />
+    <None Remove="Resources\NetworkCamera.ico" />
+    <None Remove="Resources\MoveDown.png" />
+    <None Remove="Resources\MoveUp.png" />
+    <None Remove="Resources\New.png" />
+    <None Remove="Resources\Refresh.png" />
+    <None Remove="Resources\Run.png" />
+    <None Remove="Resources\Save.png" />
+    <None Remove="Resources\SortTextDown.png" />
+    <None Remove="Resources\Stop.png" />
+    <None Remove="Resources\Tools.png" />
+    <None Remove="Resources\Up.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="3.6.0">
+      <NoWarn>NU1701</NoWarn>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.3" />
+    <PackageReference Include="Ookii.Dialogs.Wpf.NETCore" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NetworkCamera.Main\NetworkCamera.Main.csproj" />
+    <ProjectReference Include="..\NetworkCamera.Setting\NetworkCamera.Setting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Add.png" />
+    <Resource Include="Resources\AddList.png" />
+    <Resource Include="Resources\AddText.png" />
+    <Resource Include="Resources\Checklist.png" />
+    <Resource Include="Resources\Clone.png" />
+    <Resource Include="Resources\Delete.png" />
+    <Resource Include="Resources\Down.png" />
+    <Resource Include="Resources\Download1.png" />
+    <Resource Include="Resources\Download2.png" />
+    <Resource Include="Resources\Download3.png" />
+    <Resource Include="Resources\Exit.png" />
+    <Resource Include="Resources\Export.png" />
+    <Resource Include="Resources\Import.png" />
+    <Resource Include="Resources\Info.png" />
+    <Resource Include="Resources\NetworkCamera.ico" />
+    <Resource Include="Resources\MoveDown.png" />
+    <Resource Include="Resources\MoveUp.png" />
+    <Resource Include="Resources\New.png" />
+    <Resource Include="Resources\Refresh.png" />
+    <Resource Include="Resources\Run.png" />
+    <Resource Include="Resources\Save.png" />
+    <Resource Include="Resources\SortTextDown.png" />
+    <Resource Include="Resources\Stop.png" />
+    <Resource Include="Resources\Tools.png" />
+    <Resource Include="Resources\Up.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ApplicationDefinition Update="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="DevicesView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+</Project>

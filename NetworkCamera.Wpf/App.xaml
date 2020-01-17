@@ -1,0 +1,13 @@
+﻿<Application x:Class="NetworkCamera.Wpf.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    StartupUri="MainWindow.xaml"
+    DispatcherUnhandledException="Application_DispatcherUnhandledException">
+    <Application.Resources>
+        <ResourceDictionary>
+            <vm:ViewModelLocator
+                x:Key="Locator"
+                xmlns:vm="clr-namespace:NetworkCamera.Main;assembly=NetworkCamera.Main" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

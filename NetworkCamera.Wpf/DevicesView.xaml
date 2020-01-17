@@ -1,0 +1,142 @@
+﻿<UserControl x:Class="NetworkCamera.Wpf.DevicesView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    xmlns:internal="clr-namespace:NetworkCamera.Wpf.Internal"
+    xmlns:local="clr-namespace:NetworkCamera.Wpf"
+    xmlns:properties="clr-namespace:NetworkCamera.Wpf.Properties"
+    xmlns:vm="clr-namespace:NetworkCamera.Device;assembly=NetworkCamera.Device"
+    DataContext="{Binding Source={StaticResource Locator}, Path=DevicesViewModel}" 
+    mc:Ignorable="d"
+    d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="FilenameEditor">
+            <internal:FilenameEditor Filename="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </DataTemplate>
+        <DataTemplate x:Key="FolderEditor">
+            <internal:FolderEditor Folder="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </DataTemplate>
+
+        <ObjectDataProvider
+            x:Key="settings"
+            ObjectInstance="{x:Static properties:Settings.Default}"/>
+    </UserControl.Resources>
+
+    <UserControl.Cursor>
+        <Binding Path="IsBusy" Converter="{internal:BusyMouseConverter}"/>
+    </UserControl.Cursor>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{Binding Source={StaticResource settings}, Path=DevicesViewSplitter, Mode=TwoWay, Converter={internal:Int32FromGridLengthConverter}}"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <GridSplitter
+             Grid.Column="1"
+             HorizontalAlignment="Left"
+             Margin="0"
+             Width="5"
+             Height="Auto"
+             VerticalAlignment="Stretch" />
+        <DockPanel Grid.Column="0">
+            <ToolBar
+                DockPanel.Dock="Top"
+                ToolBarTray.IsLocked="True">
+                <Button ToolTip="Add device" Command="{Binding AddCommand}">
+                    <Image Source="/Resources/Add.png" Width="16" Height="16"/>
+                </Button>
+                <Button ToolTip="Delete" Command="{Binding SelectedItem.DeleteCommand}">
+                    <Image Source="/Resources/Delete.png" Width="16" Height="16"/>
+                </Button>
+                <Button ToolTip="Start device" Command="{Binding SelectedItem.StartCommand}">
+                    <Image Source="/Resources/Run.png" Width="16" Height="16"/>
+                </Button>
+                <Button ToolTip="Stop device" Command="{Binding SelectedItem.StopCommand}">
+                    <Image Source="/Resources/Stop.png" Width="16" Height="16"/>
+                </Button>
+            </ToolBar>
+            <TreeView
+                ItemsSource="{Binding Devices}"
+                BorderThickness="0">
+                <TreeView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem
+                            Header="Add device"
+                            Command="{Binding AddCommand}">
+                            <MenuItem.Icon>
+                                <Image Source="/Resources/Add.png" Width="16" Height="16"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </TreeView.ContextMenu>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <i:InvokeCommandAction
+                            Command="{Binding SelectedChangedCommand}"
+                            CommandParameter="{Binding Path=SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type TreeView}}}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <TreeView.Resources>
+                    <DataTemplate DataType="{x:Type vm:DeviceViewModel}" >
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox
+                                IsChecked="{Binding Active}"
+                                Command="{Binding ActiveCommand}" />
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{} {0}">
+                                        <Binding Path="Model.Name"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                                <TextBlock.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem
+                                            Header="Delete device"
+                                            Command="{Binding DeleteCommand}" >
+                                            <MenuItem.Icon>
+                                                <Image Source="/Resources/Delete.png" Width="16" Height="16"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </TextBlock.ContextMenu>
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </TreeView.Resources>
+            </TreeView>
+        </DockPanel>
+        <ContentControl
+            Grid.Column="1"
+            Margin="7,0,0,0"
+            Content="{Binding Path=SelectedItem}">
+            <ContentControl.Resources>
+                <DataTemplate DataType="{x:Type vm:DeviceViewModel}">
+                    <TabControl>
+                        <TabItem Header="View">
+                            <local:CropControl
+                                Source="{Binding Bitmap, Converter={internal:ImageConverter}}"
+                                Crop="{Binding Crop, Mode=TwoWay}" />
+                        </TabItem>
+                        <TabItem Header="Settings">
+                            <xctk:PropertyGrid
+                                ShowTitle="False"
+                                ShowSearchBox="False"
+                                ShowSummary="True"
+                                ShowAdvancedOptions="False"
+                                ShowSortOptions="False"
+                                SelectedObject="{Binding Model}">
+                                <xctk:PropertyGrid.EditorDefinitions>
+                                    <xctk:EditorTemplateDefinition TargetProperties="Folder" EditingTemplate="{StaticResource FolderEditor}" />
+                                </xctk:PropertyGrid.EditorDefinitions>
+                            </xctk:PropertyGrid>
+                        </TabItem>
+                    </TabControl>
+                </DataTemplate>
+            </ContentControl.Resources>
+        </ContentControl>
+    </Grid>
+</UserControl>

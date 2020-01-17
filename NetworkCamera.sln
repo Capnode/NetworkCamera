@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkCamera.Wpf", "NetworkCamera.Wpf\NetworkCamera.Wpf.csproj", "{77DB0B02-348E-4F0E-B88C-92CA9D39565D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{67DCD814-8BED-4289-9164-BA73ABF8B43B} = {67DCD814-8BED-4289-9164-BA73ABF8B43B}
+		{9342185E-D6FD-488E-A6E3-4A56278C071A} = {9342185E-D6FD-488E-A6E3-4A56278C071A}
+		{970FF98D-31FA-46B9-84F0-9BC7B43BC36A} = {970FF98D-31FA-46B9-84F0-9BC7B43BC36A}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkCamera.Device", "NetworkCamera.Device\NetworkCamera.Device.csproj", "{67DCD814-8BED-4289-9164-BA73ABF8B43B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{970FF98D-31FA-46B9-84F0-9BC7B43BC36A} = {970FF98D-31FA-46B9-84F0-9BC7B43BC36A}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkCamera.Core", "NetworkCamera.Core\NetworkCamera.Core.csproj", "{970FF98D-31FA-46B9-84F0-9BC7B43BC36A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkCamera.Setting", "NetworkCamera.Setting\NetworkCamera.Setting.csproj", "{833058DB-D7FF-40CD-A8C0-2E0861D5F7D1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkCamera.Main", "NetworkCamera.Main\NetworkCamera.Main.csproj", "{9342185E-D6FD-488E-A6E3-4A56278C071A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{77DB0B02-348E-4F0E-B88C-92CA9D39565D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77DB0B02-348E-4F0E-B88C-92CA9D39565D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77DB0B02-348E-4F0E-B88C-92CA9D39565D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77DB0B02-348E-4F0E-B88C-92CA9D39565D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67DCD814-8BED-4289-9164-BA73ABF8B43B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67DCD814-8BED-4289-9164-BA73ABF8B43B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67DCD814-8BED-4289-9164-BA73ABF8B43B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67DCD814-8BED-4289-9164-BA73ABF8B43B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{970FF98D-31FA-46B9-84F0-9BC7B43BC36A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{970FF98D-31FA-46B9-84F0-9BC7B43BC36A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{970FF98D-31FA-46B9-84F0-9BC7B43BC36A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{970FF98D-31FA-46B9-84F0-9BC7B43BC36A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{833058DB-D7FF-40CD-A8C0-2E0861D5F7D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{833058DB-D7FF-40CD-A8C0-2E0861D5F7D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{833058DB-D7FF-40CD-A8C0-2E0861D5F7D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{833058DB-D7FF-40CD-A8C0-2E0861D5F7D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9342185E-D6FD-488E-A6E3-4A56278C071A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9342185E-D6FD-488E-A6E3-4A56278C071A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9342185E-D6FD-488E-A6E3-4A56278C071A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9342185E-D6FD-488E-A6E3-4A56278C071A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7FBA8E86-4D03-4D56-98E8-3B49F39F0FDA}
+	EndGlobalSection
+EndGlobal
