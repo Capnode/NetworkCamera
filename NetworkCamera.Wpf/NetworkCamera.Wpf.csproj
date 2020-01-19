@@ -5,13 +5,15 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <StartupObject>NetworkCamera.Wpf.App</StartupObject>
-    <ApplicationIcon>Resources\NetworkCamera.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\NetcamBlue.ico</ApplicationIcon>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Copyright></Copyright>
     <Company>Capnode</Company>
     <Product>NetworkCamera</Product>
     <Authors />
     <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -21,7 +23,33 @@
     <NoWarn>NU1701;NU1702</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <CodeAnalysisRuleSet />
+    <NoWarn>NU1701;NU1702</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <CodeAnalysisRuleSet />
+    <NoWarn>NU1701;NU1702</NoWarn>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
     <CodeAnalysisRuleSet />
@@ -43,9 +71,9 @@
     <None Remove="Resources\Export.png" />
     <None Remove="Resources\Import.png" />
     <None Remove="Resources\Info.png" />
-    <None Remove="Resources\NetworkCamera.ico" />
     <None Remove="Resources\MoveDown.png" />
     <None Remove="Resources\MoveUp.png" />
+    <None Remove="Resources\Netcam.png" />
     <None Remove="Resources\New.png" />
     <None Remove="Resources\Refresh.png" />
     <None Remove="Resources\Run.png" />
@@ -92,9 +120,9 @@
     <Resource Include="Resources\Export.png" />
     <Resource Include="Resources\Import.png" />
     <Resource Include="Resources\Info.png" />
-    <Resource Include="Resources\NetworkCamera.ico" />
     <Resource Include="Resources\MoveDown.png" />
     <Resource Include="Resources\MoveUp.png" />
+    <Resource Include="Resources\NetcamBlue.png" />
     <Resource Include="Resources\New.png" />
     <Resource Include="Resources\Refresh.png" />
     <Resource Include="Resources\Run.png" />

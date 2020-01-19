@@ -19,11 +19,36 @@ namespace NetworkCamera.Setting
 {
     public class SettingsModel
     {
-        [DisplayName("Max backtests")]
-        [Description("Largest number of simultaneous ongoing backtest execution.")]
+        [DisplayName("MyDocuments")]
+        [Description("MyDocuments folder.")]
         [Browsable(true)]
-        [ReadOnly(false)]
-        public int MaxBacktests { get; set; } = Environment.ProcessorCount;
+        [ReadOnly(true)]
+        public string MyDocuments { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+        [DisplayName("ApplicationData")]
+        [Description("ApplicationData folder.")]
+        [Browsable(true)]
+        [ReadOnly(true)]
+        public string AppData { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+
+        [DisplayName("CommonApplicationData")]
+        [Description("CommonApplicationData folder.")]
+        [Browsable(true)]
+        [ReadOnly(true)]
+        public string CommonApplicationData { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+
+        [DisplayName("ProgramFiles")]
+        [Description("ProgramFiles folder.")]
+        [Browsable(true)]
+        [ReadOnly(true)]
+        public string ProgramFiles { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+
+        [DisplayName("BaseDirectory")]
+        [Description("BaseDirectory folder.")]
+        [Browsable(true)]
+        [ReadOnly(true)]
+        public string BaseDirectory { get; set; } = AppDomain.CurrentDomain.BaseDirectory;
 
         public void Copy(SettingsModel oldSettings)
         {
@@ -32,14 +57,14 @@ namespace NetworkCamera.Setting
                 return;
             }
 
-            MaxBacktests = oldSettings.MaxBacktests;
+            AppData = oldSettings.AppData;
         }
 
         public SettingsModel Clone()
         {
             return new SettingsModel
             {
-                MaxBacktests = MaxBacktests
+                AppData = AppData
             };
         }
     }

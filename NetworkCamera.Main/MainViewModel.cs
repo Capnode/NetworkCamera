@@ -45,11 +45,11 @@ namespace NetworkCamera.Main
             Messenger.Default.Register<NotificationMessage>(this, OnStatusMessage);
 
             // Set working directory
-            string appData = GetAppDataFolder();
-            Directory.SetCurrentDirectory(appData);
+            string userData = GetUserDataFolder();
+            Directory.SetCurrentDirectory(userData);
 
             // Read configuration
-            ReadConfigAsync(appData);
+            ReadConfigAsync(userData);
         }
 
         public RelayCommand SaveCommand { get; }
@@ -75,24 +75,33 @@ namespace NetworkCamera.Main
 
         public void SaveAll()
         {
-            string appData = GetAppDataFolder();
+            string appData = GetUserDataFolder();
             SaveConfig(appData);
         }
 
-        private void OnStatusMessage(NotificationMessage message)
-        {
-            StatusMessage = message.Notification;
-            if (string.IsNullOrWhiteSpace(message.Notification))
-                return;
-        }
-
-        private static string GetAppDataFolder()
+        public static string GetAppDataFolder()
         {
             string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            GetAssemblyInfo(out string company, out string product);
+            string path = Path.Combine(appData, company, product);
+            Directory.CreateDirectory(path);
+            return path;
+        }
 
+        public static string GetUserDataFolder()
+        {
+            string userData = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            GetAssemblyInfo(out string company, out string product);
+            string path = Path.Combine(userData, company, product);
+            Directory.CreateDirectory(path);
+            return path;
+        }
+
+        private static void GetAssemblyInfo(out string company, out string product)
+        {
             Assembly assembly = Assembly.GetEntryAssembly();
-            string company = string.Empty;
-            string product = string.Empty;
+            company = string.Empty;
+            product = string.Empty;
             object[] companyAttributes = assembly.GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
             if ((companyAttributes != null) && (companyAttributes.Length > 0))
             {
@@ -104,19 +113,24 @@ namespace NetworkCamera.Main
             {
                 product = ((AssemblyProductAttribute)productAttributes[0]).Product;
             }
+        }
 
-            string path = Path.Combine(appData, company, product);
-            Directory.CreateDirectory(path);
-            return path;
+        private void OnStatusMessage(NotificationMessage message)
+        {
+            StatusMessage = message.Notification;
+            if (string.IsNullOrWhiteSpace(message.Notification))
+                return;
         }
 
         private void ReadConfigAsync(string appData)
         {
+            string contentFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
             try
             {
                 IsBusy = true;
-                SettingsViewModel.Read(Path.Combine(appData, "Settings.json"));
-                DevicesViewModel.Read(Path.Combine(appData, "Devices.json"));
+
+                SettingsViewModel.Read(Path.Combine(appData, "Settings.json"), Path.Combine(contentFolder, "Settings.json"));
+                DevicesViewModel.Read(Path.Combine(appData, "Devices.json"), Path.Combine(contentFolder, "Devices.json"));
             }
             finally
             {

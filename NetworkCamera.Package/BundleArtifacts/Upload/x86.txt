@@ -1,0 +1,1 @@
+SymbolPackage=C:\Source\NetworkCamera\NetworkCamera.Package\bin\x86\Release\Upload\NetworkCamera.Package_1.0.0.0\NetworkCamera.Package_1.0.0.0_x86.appxsym
