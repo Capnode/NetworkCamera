@@ -9,7 +9,7 @@
   <Identity
     Name="CapnodeAB.Networkcamera"
     Publisher="CN=48C91C97-26BF-434A-9413-438A6677A9BF"
-    Version="1.0.0.0" />
+    Version="1.0.1.0" />
 
   <Properties>
     <DisplayName>Network camera</DisplayName>
