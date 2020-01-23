@@ -24,7 +24,7 @@
                 </MenuItem>
                 <MenuItem
                     Header="Settings..."
-                    Click="HelpFileSettings">
+                    Click="FileSettings">
                     <MenuItem.Icon>
                         <Image Source="/Resources/Tools.png" Width="16" Height="16"/>
                     </MenuItem.Icon>

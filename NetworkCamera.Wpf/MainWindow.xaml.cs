@@ -48,7 +48,7 @@ namespace NetworkCamera.Wpf
             about.ShowDialog();
         }
 
-        private void HelpFileSettings(object sender, RoutedEventArgs e)
+        private void FileSettings(object sender, RoutedEventArgs e)
         {
             var view = new SettingsView();
             var vm = view.DataContext as SettingsViewModel;

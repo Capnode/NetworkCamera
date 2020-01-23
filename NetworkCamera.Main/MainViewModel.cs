@@ -45,11 +45,11 @@ namespace NetworkCamera.Main
             Messenger.Default.Register<NotificationMessage>(this, OnStatusMessage);
 
             // Set working directory
-            string userData = GetUserDataFolder();
-            Directory.SetCurrentDirectory(userData);
+            string appData = GetAppDataFolder();
+            Directory.SetCurrentDirectory(appData);
 
             // Read configuration
-            ReadConfigAsync(userData);
+            ReadConfigAsync(appData);
         }
 
         public RelayCommand SaveCommand { get; }
@@ -75,7 +75,7 @@ namespace NetworkCamera.Main
 
         public void SaveAll()
         {
-            string appData = GetUserDataFolder();
+            string appData = GetAppDataFolder();
             SaveConfig(appData);
         }
 
@@ -108,13 +108,13 @@ namespace NetworkCamera.Main
 
         private void ReadConfigAsync(string appData)
         {
-            string contentFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+            string contentData = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
             try
             {
                 IsBusy = true;
 
-                SettingsViewModel.Read(Path.Combine(appData, "Settings.json"), Path.Combine(contentFolder, "Settings.json"));
-                DevicesViewModel.Read(Path.Combine(appData, "Devices.json"), Path.Combine(contentFolder, "Devices.json"));
+                SettingsViewModel.Read(Path.Combine(appData, "Settings.json"), Path.Combine(contentData, "Settings.json"));
+                DevicesViewModel.Read(Path.Combine(appData, "Devices.json"), Path.Combine(contentData, "Devices.json"));
             }
             finally
             {
