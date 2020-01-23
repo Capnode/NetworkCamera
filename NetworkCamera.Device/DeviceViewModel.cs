@@ -145,7 +145,7 @@ namespace NetworkCamera.Device
             _cancel = new CancellationTokenSource();
             while (!_cancel.Token.IsCancellationRequested && model.Active)
             {
-                Debug.WriteLine($"{model.Provider} start {model.Source}");
+                Debug.WriteLine($"{model.Format} start {model.Source}");
                 try
                 {
                     _factory = new DeviceFactory();
@@ -174,7 +174,7 @@ namespace NetworkCamera.Device
             }
 
             _cancel = null;
-             Debug.WriteLine($"{Model.Provider} stop {model.Source}");
+             Debug.WriteLine($"{Model.Format} stop {model.Source}");
         }
 
         private void StopTask()

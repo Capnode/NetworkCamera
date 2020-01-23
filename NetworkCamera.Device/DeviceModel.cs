@@ -21,31 +21,38 @@ namespace NetworkCamera.Device
 {
     public class DeviceModel : ModelBase
     {
-        private string _provider;
+        private string _format;
 
-        [Category("Data provider")]
+        [Category("Device")]
         [DisplayName("Device name")]
         [Description("Name of the device.")]
         [Browsable(true)]
         [ReadOnly(false)]
         public string Name { get; set; } = "Device";
 
-        [Category("Data provider")]
-        [DisplayName("Provider")]
-        [Description("Name of the daevice provider.")]
+        [Category("Device")]
+        [DisplayName("Format")]
+        [Description("Streaming format.")]
         [TypeConverter(typeof(DeviceNameConverter))]
         [RefreshProperties(RefreshProperties.All)]
         [Browsable(true)]
         [ReadOnly(false)]
-        public string Provider
+        public string Format
         {
-            get => _provider;
+            get => _format;
             set
             {
-                _provider = value;
+                _format = value;
                 Refresh();
             }
         }
+
+        [Category("Device")]
+        [DisplayName("Source")]
+        [Description("Device source address")]
+        [Browsable(false)]
+        [ReadOnly(false)]
+        public string Source { get; set; } = string.Empty;
 
         [Category("Account")]
         [DisplayName("Login")]
@@ -62,26 +69,19 @@ namespace NetworkCamera.Device
         [ReadOnly(false)]
         public string Password { get; set; } = string.Empty;
 
-        [Category("Account")]
-        [DisplayName("Source")]
-        [Description("Device Source address")]
-        [Browsable(false)]
-        [ReadOnly(false)]
-        public string Source { get; set; } = string.Empty;
-
-        [Category("Account")]
+        [Category("Export")]
         [DisplayName("Folder")]
-        [Description("Device Folder address")]
+        [Description("File export folder")]
         [Browsable(true)]
         [ReadOnly(false)]
         public string Folder { get; set; }
 
-        [Category("Account")]
-        [DisplayName("Trigger")]
-        [Description("Event trigger web address")]
+        [Category("Export")]
+        [DisplayName("Notification")]
+        [Description("Event notification web address")]
         [Browsable(true)]
         [ReadOnly(false)]
-        public string Trigger { get; set; }
+        public string Notification { get; set; }
 
         [Browsable(false)]
         [ReadOnly(false)]
@@ -94,7 +94,7 @@ namespace NetworkCamera.Device
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
         public void Refresh()
         {
-            switch (Provider)
+            switch (Format)
             {
                 case nameof(Mjpeg):
                     SetBrowsable(nameof(Source), true);

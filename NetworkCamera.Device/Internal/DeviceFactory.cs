@@ -28,7 +28,7 @@ namespace NetworkCamera.Device.Internal
         {
             if (deviceModel == null) throw new ArgumentNullException(nameof(deviceModel));
 
-            IDevice device = CreateProvider((string)deviceModel.Provider);
+            IDevice device = CreateProvider((string)deviceModel.Format);
             if (device == null)
             {
                 deviceModel.Active = false;

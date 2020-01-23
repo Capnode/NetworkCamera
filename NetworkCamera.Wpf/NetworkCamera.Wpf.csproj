@@ -5,15 +5,10 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <StartupObject>NetworkCamera.Wpf.App</StartupObject>
-    <ApplicationIcon>Resources\NetcamBlue.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\NetcamBlack.ico</ApplicationIcon>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Copyright></Copyright>
-    <Company>Capnode</Company>
-    <Product>NetworkCamera</Product>
-    <Authors />
     <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
     <Platforms>AnyCPU;x64;x86</Platforms>
-    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -123,7 +118,6 @@
     <Resource Include="Resources\Info.png" />
     <Resource Include="Resources\MoveDown.png" />
     <Resource Include="Resources\MoveUp.png" />
-    <Resource Include="Resources\NetcamBlue.ico" />
     <Resource Include="Resources\New.png" />
     <Resource Include="Resources\Refresh.png" />
     <Resource Include="Resources\Run.png" />

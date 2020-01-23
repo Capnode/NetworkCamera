@@ -14,7 +14,6 @@
     <StackPanel>
         <Label FontWeight="Bold" Content="{Binding ProductName}" />
         <Label FontWeight="Bold" Content="{Binding Version}" />
-        <Label FontWeight="Bold" Content="{Binding Build}" />
         <Label FontWeight="Bold" Content="{Binding Copyright}" />
         <TextBox
             Margin="10"

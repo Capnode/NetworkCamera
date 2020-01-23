@@ -56,7 +56,7 @@ namespace NetworkCamera.Device.Internal
                 SaveImage(frame);
             }
 
-            if (!string.IsNullOrEmpty(_device.Trigger)
+            if (!string.IsNullOrEmpty(_device.Notification)
                 && _motion == _triggerFrame
                 && DateTime.Now - _postEventTime > TimeSpan.FromMinutes(_minPostMinutes))
             {
@@ -116,7 +116,7 @@ namespace NetworkCamera.Device.Internal
         {
             using var client = new HttpClient
             {
-                BaseAddress = new Uri(_device.Trigger)
+                BaseAddress = new Uri(_device.Notification)
             };
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var param = new
@@ -126,7 +126,7 @@ namespace NetworkCamera.Device.Internal
                 value3 = "value3"
             };
             string json = JsonConvert.SerializeObject(param);
-            var uri = new Uri(_device.Trigger);
+            var uri = new Uri(_device.Notification);
             using StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
             HttpResponseMessage result = await client.PostAsync(uri, content).ConfigureAwait(true);
             Debug.WriteLine(json);

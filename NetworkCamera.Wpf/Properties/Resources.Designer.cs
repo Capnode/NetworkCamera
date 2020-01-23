@@ -223,9 +223,9 @@ namespace NetworkCamera.Wpf.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap NetcamBlue {
+        internal static System.Drawing.Bitmap NetcamBlack {
             get {
-                object obj = ResourceManager.GetObject("NetcamBlue", resourceCulture);
+                object obj = ResourceManager.GetObject("NetcamBlack", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -233,9 +233,9 @@ namespace NetworkCamera.Wpf.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon NetcamBlue1 {
+        internal static System.Drawing.Icon NetcamBlack1 {
             get {
-                object obj = ResourceManager.GetObject("NetcamBlue1", resourceCulture);
+                object obj = ResourceManager.GetObject("NetcamBlack1", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -243,9 +243,9 @@ namespace NetworkCamera.Wpf.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap NetcamBlue1080 {
+        internal static System.Drawing.Bitmap NetcamBlack1080 {
             get {
-                object obj = ResourceManager.GetObject("NetcamBlue1080", resourceCulture);
+                object obj = ResourceManager.GetObject("NetcamBlack1080", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

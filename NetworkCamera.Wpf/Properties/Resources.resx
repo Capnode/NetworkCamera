@@ -190,16 +190,16 @@
   <data name="Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Up.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="NetcamBlue" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\netcamblue.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NetcamBlue1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NetcamBlue.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="NetcamWhite" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\netcamwhite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="NetcamBlue1080" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NetcamBlue1080.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="NetcamBlack" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\netcamblack.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NetcamBlack1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\netcamblack.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NetcamBlack1080" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\netcamblack1080.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

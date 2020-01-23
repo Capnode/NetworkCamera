@@ -15,6 +15,8 @@
 using NetworkCamera.Main;
 using NetworkCamera.Setting;
 using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Windows;
 
 namespace NetworkCamera.Wpf
@@ -46,7 +48,7 @@ namespace NetworkCamera.Wpf
             about.ShowDialog();
         }
 
-        private void FileSettings(object sender, RoutedEventArgs e)
+        private void HelpFileSettings(object sender, RoutedEventArgs e)
         {
             var view = new SettingsView();
             var vm = view.DataContext as SettingsViewModel;
@@ -59,6 +61,44 @@ namespace NetworkCamera.Wpf
             else
             {
                 vm.Model.Copy(oldSettings);
+            }
+        }
+        private void HelpTechnicalSupport(object sender, RoutedEventArgs e)
+        {
+            OpenUrl("https://github.com/Capnode/NetworkCamera");
+        }
+
+        private void HelpPrivacyPolicy(object sender, RoutedEventArgs e)
+        {
+            OpenUrl("https://github.com/Capnode/NetworkCamera/wiki/Privacy-policy");
+        }
+
+        private void OpenUrl(string url)
+        {
+            try
+            {
+                Process.Start(url);
+            }
+            catch
+            {
+                // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    url = url.Replace("&", "^&", StringComparison.OrdinalIgnoreCase);
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Process.Start("xdg-open", url);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    Process.Start("open", url);
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
     }

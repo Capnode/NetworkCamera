@@ -44,21 +44,10 @@ namespace NetworkCamera.Main
             {
                 return String.Format(
                     CultureInfo.InvariantCulture,
-                    "{0}.{1}",
+                    "{0}.{1}.{2}",
                     Assembly.GetExecutingAssembly().GetName().Version.Major,
-                    Assembly.GetExecutingAssembly().GetName().Version.Minor);
-            }
-        }
-
-        public static string AssemblyBuild
-        {
-            get
-            {
-                return String.Format(
-                    CultureInfo.InvariantCulture, 
-                    "{0}.{1}",
-                    Assembly.GetExecutingAssembly().GetName().Version.Build,
-                    Assembly.GetExecutingAssembly().GetName().Version.Revision);
+                    Assembly.GetExecutingAssembly().GetName().Version.Minor,
+                    Assembly.GetExecutingAssembly().GetName().Version.Build);
             }
         }
 

@@ -24,7 +24,7 @@
                 </MenuItem>
                 <MenuItem
                     Header="Settings..."
-                    Click="FileSettings">
+                    Click="HelpFileSettings">
                     <MenuItem.Icon>
                         <Image Source="/Resources/Tools.png" Width="16" Height="16"/>
                     </MenuItem.Icon>
@@ -37,6 +37,14 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="_Help">
+                <MenuItem
+                    Header="Technical support"
+                    Click="HelpTechnicalSupport">
+                </MenuItem>
+                <MenuItem
+                    Header="Privacy policy"
+                    Click="HelpPrivacyPolicy">
+                </MenuItem>
                 <MenuItem
                     Header="_About"
                     Click="HelpAbout">

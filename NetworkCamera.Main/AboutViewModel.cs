@@ -23,7 +23,6 @@ namespace NetworkCamera.Main
         public string Title { get; private set; }
         public string ProductName { get; private set; }
         public string Version { get; private set; }
-        public string Build { get; private set; }
         public string Copyright { get; private set; }
         public string Description { get; private set; }
 
@@ -32,7 +31,6 @@ namespace NetworkCamera.Main
             Title = String.Format(CultureInfo.InvariantCulture, "About {0}", AboutModel.AssemblyProduct);
             ProductName = AboutModel.AssemblyProduct;
             Version = String.Format(CultureInfo.InvariantCulture, "Version: {0}", AboutModel.AssemblyVersion);
-            Build = String.Format(CultureInfo.InvariantCulture, "Build: {0}", AboutModel.AssemblyBuild);
             Copyright = AboutModel.AssemblyCopyright;
             Description = AboutModel.AssemblyDescription;
         }

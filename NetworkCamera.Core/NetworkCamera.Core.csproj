@@ -2,11 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <Copyright></Copyright>
-    <Company></Company>
-    <Authors></Authors>
-    <PackageId>NetworkCamera.Core</PackageId>
-    <Product>NetworkCamera.Core</Product>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
