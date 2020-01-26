@@ -30,7 +30,8 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem
-                    Header="E_xit">
+                    Header="E_xit"
+                    Click="FileExit">
                     <MenuItem.Icon>
                         <Image Source="/Resources/Exit.png" Width="16" Height="16"/>
                     </MenuItem.Icon>

@@ -63,6 +63,12 @@ namespace NetworkCamera.Wpf
                 vm.Model.Copy(oldSettings);
             }
         }
+
+        private void FileExit(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
         private void HelpTechnicalSupport(object sender, RoutedEventArgs e)
         {
             OpenUrl("https://github.com/Capnode/NetworkCamera");
