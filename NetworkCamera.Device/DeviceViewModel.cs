@@ -19,6 +19,7 @@ using NetworkCamera.Core;
 using NetworkCamera.Device.Internal;
 using NetworkCamera.Device.Properties;
 using NetworkCamera.Setting;
+using NetworkCamera.TFLite;
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -143,6 +144,10 @@ namespace NetworkCamera.Device
             DataToModel();
             DeviceModel model = Model;
             _cancel = new CancellationTokenSource();
+
+            using Network network = new Network();
+            network.LoadModel();
+
             while (!_cancel.Token.IsCancellationRequested && model.Active)
             {
                 Debug.WriteLine($"{model.Format} start {model.Source}");

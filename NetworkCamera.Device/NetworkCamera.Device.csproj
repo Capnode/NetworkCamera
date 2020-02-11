@@ -58,6 +58,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NetworkCamera.Core\NetworkCamera.Core.csproj" />
     <ProjectReference Include="..\NetworkCamera.Setting\NetworkCamera.Setting.csproj" />
+    <ProjectReference Include="..\NetworkCamera.TFLite\NetworkCamera.TFLite.csproj" />
   </ItemGroup>
 
   <ItemGroup>
