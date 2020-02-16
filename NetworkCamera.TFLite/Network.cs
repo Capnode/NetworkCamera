@@ -15,6 +15,7 @@
 using Capnode.TFLite;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 
@@ -24,7 +25,6 @@ namespace NetworkCamera.TFLite
     {
         private const string labelFileName = "Model/labels.txt";
         private const string modelFileName = "Model/detect.tflite";
-        private const string imageFileName = "Model/dog416.png";
 
         private bool _isDisposed = false;
         private Interpreter _interpreter;
@@ -64,10 +64,23 @@ namespace NetworkCamera.TFLite
             if (allocateTensorStatus == Status.Error) throw new Exception("Failed to allocate tensor");
             _inputTensor = _interpreter.Inputs[0];
             _outputTensors = _interpreter.Outputs;
-
-            string imagePath = Path.Combine(exePath, imageFileName);
-            RecognitionResult[] result = Recognize(imagePath);
             return true;
+        }
+
+        /// <summary>
+        /// Perform Coco Ssd Mobilenet detection
+        /// </summary>
+        /// <param name="imageFile">The image file where we will ran the network through</param>
+        /// <param name="scoreThreshold">If non-positive, will return all results. If positive, we will only return results with score larger than this value</param>
+        /// <returns>The result of the detection.</returns>
+        public RecognitionResult[] Recognize(Bitmap bitmap, float scoreThreshold = 0.0f)
+        {
+            int height = _inputTensor.Dims[1];
+            int width = _inputTensor.Dims[2];
+
+            NativeImageIO.BitmapToTensor<byte>(bitmap, _inputTensor.DataPointer, height, width, 0.0f, 1.0f);
+            _interpreter.Invoke();
+            return ConvertResults(scoreThreshold);
         }
 
         /// <summary>

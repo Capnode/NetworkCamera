@@ -59,6 +59,12 @@ namespace NetworkCamera.Device
             DoActiveCommand(Active);
         }
 
+        ~DeviceViewModel()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(false);
+        }
+
         public RelayCommand DeleteCommand { get; }
         public RelayCommand ActiveCommand { get; }
         public RelayCommand StartCommand { get; }
@@ -144,9 +150,6 @@ namespace NetworkCamera.Device
             DataToModel();
             DeviceModel model = Model;
             _cancel = new CancellationTokenSource();
-
-            using Network network = new Network();
-            network.LoadModel();
 
             while (!_cancel.Token.IsCancellationRequested && model.Active)
             {
@@ -243,6 +246,7 @@ namespace NetworkCamera.Device
                 if (disposing)
                 {
                     _cancel.Dispose();
+                    _filter.Dispose();
                 }
 
                 _isDisposed = true;

@@ -12,12 +12,17 @@
  * limitations under the License.
  */
 
+using Capnode.TFLite;
+using NetworkCamera.TFLite;
 using Newtonsoft.Json;
 using OpenCvSharp;
+using OpenCvSharp.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -25,13 +30,16 @@ using System.Threading.Tasks;
 
 namespace NetworkCamera.Device.Internal
 {
-    internal class Filter
+    internal class Filter : IDisposable
     {
-        const int _triggerFrame = 10;
-        const double _minPostMinutes = 10;
+        private const int _triggerFrame = 10;
+        private const double _minPostMinutes = 10;
+        private const float _minConfidence = 0.5F;
 
+        private bool _disposed = false;
         private readonly DeviceModel _device;
         private readonly BackgroundSubtractorMOG2 _segmentor;
+        private readonly Network _network;
         private int _counter;
         private int _motion;
         private DateTime _postEventTime;
@@ -40,15 +48,29 @@ namespace NetworkCamera.Device.Internal
         {
             _device = device;
             _segmentor = BackgroundSubtractorMOG2.Create(500, 16, true);
+            _network = new Network();
+            _network.LoadModel();
+        }
+
+        ~Filter()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(false);
         }
 
         internal void ProcessFrame(Mat frame)
         {
-            if (!DetectMotion(frame))
+            IEnumerable<Rect> motion = DetectMotion(frame);
+            if (!motion.Any())
             {
                 _motion = 0;
                 return;
             }
+
+            IEnumerable<Classification> classification = ClassifyFrame(frame, new Rect(0, 0, frame.Width, frame.Height));
+
+            DrawMotion(frame, motion);
+            DrawClassification(frame, classification);
 
             _motion++;
             if (!string.IsNullOrEmpty(_device.Folder))
@@ -65,18 +87,11 @@ namespace NetworkCamera.Device.Internal
             }
         }
 
-        private bool DetectMotion(Mat frame)
+        private IEnumerable<Rect> DetectMotion(Mat frame)
         {
-            //OpenCvSharp.Mat src = new OpenCvSharp.Mat(path, OpenCvSharp.ImreadModes.Grayscale);
-            //// Mat src = Cv2.ImRead("lenna.png", ImreadModes.Grayscale);
-            //OpenCvSharp.Mat dst = new OpenCvSharp.Mat();
-
-            //OpenCvSharp.Cv2.Canny(src, dst, 50, 200);
-            //            Cv2.PutText(frame, DateTime.Now.ToLongTimeString(), new Point(0, 100), HersheyFonts.HersheyComplexSmall, 1, Scalar.All(255));
-
             Mat fgmask = new Mat();
             _segmentor.Apply(frame, fgmask);
-            if (fgmask.Empty()) return false;
+            if (fgmask.Empty()) yield break;
 
             Cv2.Threshold(fgmask, fgmask, 25, 255, ThresholdTypes.Binary);
             int noiseSize = 9;
@@ -85,14 +100,69 @@ namespace NetworkCamera.Device.Internal
             kernel = Cv2.GetStructuringElement(MorphShapes.Rect, new Size(noiseSize, noiseSize));
             Cv2.Dilate(fgmask, fgmask, kernel, new Point(-1, -1), 3);
             Cv2.FindContours(fgmask, out Point[][] contours, out HierarchyIndex[] hierarchies, RetrievalModes.Tree, ContourApproximationModes.ApproxSimple);
-            Scalar color = new Scalar(0, 0, 255);
             foreach (Point[] contour in contours)
             {
-                var rect = Cv2.BoundingRect(contour);
-                Cv2.Rectangle(frame, rect, color, 1);
+                yield return Cv2.BoundingRect(contour);
             }
+        }
 
-            return contours.Length > 0;
+        private IEnumerable<Classification> ClassifyFrame(Mat frame, Rect rect)
+        {
+            Mat crop = frame.Clone(rect);
+            System.Drawing.Bitmap bitmap = crop.ToBitmap();
+            RecognitionResult[] results = _network.Recognize(bitmap, _minConfidence);
+            foreach (RecognitionResult result in results)
+            {
+                int x0 = (int)(frame.Width * result.Rectangle[0]);
+                int y0 = (int)(frame.Height * result.Rectangle[1]);
+                int x1 = (int)(frame.Width * result.Rectangle[2]);
+                int y1 = (int)(frame.Height * result.Rectangle[3]);
+                Debug.WriteLine($"{result.Label} {result.Score:0.####} W:{x1 - x0} H:{y1 - y0}");
+
+                yield return new Classification
+                {
+                    Label = result.Label,
+                    Score = result.Score,
+                    Rectangle = new Rect(rect.Left + x0, rect.Top + y0, x1 - x0, y1 - y0),
+                };
+            }
+        }
+
+        private static void DrawMotion(Mat frame, IEnumerable<Rect> motions)
+        {
+            Scalar color = new Scalar(0, 255, 255);
+            foreach (Rect rect in motions)
+            {
+                Cv2.Rectangle(frame, rect, color, 2);
+            }
+        }
+
+        private static void DrawClassification(Mat frame, IEnumerable<Classification> classifications)
+        {
+            Scalar color = new Scalar(0, 0, 255);
+            foreach (Classification classification in classifications)
+            {
+                var rect = classification.Rectangle;
+                Cv2.Rectangle(frame, rect, color, 2);
+                DrawTextInBoxAbove(frame, rect, classification.Label);
+            }
+        }
+
+        private static void DrawTextInBoxAbove(Mat frame, Rect rect, string label)
+        {
+            Scalar fontColor = Scalar.All(0);
+            Scalar borderColor = new Scalar(0, 0, 255);
+            HersheyFonts fontFace = HersheyFonts.HersheySimplex;
+            double fontScale = 1;
+            int thickness = 2;
+            Size size = Cv2.GetTextSize(label, fontFace, fontScale, thickness, out int baseline);
+            baseline += thickness;
+            Cv2.Rectangle(
+                frame,
+                new Rect(rect.Left, rect.Top - size.Height - baseline , size.Width + thickness, size.Height + baseline),
+                borderColor,
+                thickness);
+            Cv2.PutText(frame, label, new Point(rect.Left, rect.Top - baseline), fontFace, fontScale, fontColor, thickness, LineTypes.AntiAlias);
         }
 
         private void SaveImage(Mat frame)
@@ -130,6 +200,26 @@ namespace NetworkCamera.Device.Internal
             using StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
             HttpResponseMessage result = await client.PostAsync(uri, content).ConfigureAwait(true);
             Debug.WriteLine(json);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _segmentor.Dispose();
+                    _network.Dispose();
+                }
+
+                _disposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

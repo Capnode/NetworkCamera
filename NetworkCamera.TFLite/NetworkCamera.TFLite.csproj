@@ -16,15 +16,11 @@
 
   <ItemGroup>
     <None Remove="Model\detect.tflite" />
-    <None Remove="Model\dog416.png" />
     <None Remove="Model\labels.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Model\detect.tflite">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Model\dog416.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Model\labels.txt">
