@@ -32,16 +32,14 @@ namespace NetworkCamera.Device.Internal
 {
     internal class Filter : IDisposable
     {
-        private const int _triggerFrame = 10;
         private const double _minPostMinutes = 10;
-        private const float _minConfidence = 0.5F;
+        private const float _minConfidence = 0.6F;
 
         private bool _disposed = false;
         private readonly DeviceModel _device;
         private readonly BackgroundSubtractorMOG2 _segmentor;
         private readonly Network _network;
-        private int _counter;
-        private int _motion;
+        private int _index;
         private DateTime _postEventTime;
 
         public Filter(DeviceModel device)
@@ -63,23 +61,26 @@ namespace NetworkCamera.Device.Internal
             IEnumerable<Rect> motion = DetectMotion(frame);
             if (!motion.Any())
             {
-                _motion = 0;
                 return;
             }
 
             IEnumerable<Classification> classification = ClassifyFrame(frame, new Rect(0, 0, frame.Width, frame.Height));
 
             DrawMotion(frame, motion);
+
+            if (!classification.Any())
+            {
+                return;
+            }
+
             DrawClassification(frame, classification);
 
-            _motion++;
             if (!string.IsNullOrEmpty(_device.Folder))
             {
                 SaveImage(frame);
             }
 
             if (!string.IsNullOrEmpty(_device.Notification)
-                && _motion == _triggerFrame
                 && DateTime.Now - _postEventTime > TimeSpan.FromMinutes(_minPostMinutes))
             {
                 _postEventTime = DateTime.Now;
@@ -175,7 +176,7 @@ namespace NetworkCamera.Device.Internal
             string path;
             do
             {
-                var filename = string.Format(CultureInfo.InvariantCulture, "image{0}.bmp", _counter++);
+                var filename = string.Format(CultureInfo.InvariantCulture, "image{0}.bmp", _index++);
                 path = Path.Combine(_device.Folder, filename);
             }
             while (File.Exists(path));
