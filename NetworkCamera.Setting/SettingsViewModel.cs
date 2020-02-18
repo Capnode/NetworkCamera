@@ -28,49 +28,28 @@ namespace NetworkCamera.Setting
 
         public SettingsModel Model { get; }
 
-        public bool Read(string fileName, string defaultFilename)
+        public bool Read(string fileName)
         {
-            if (!File.Exists(fileName))
+            if (!File.Exists(fileName)) return false;
+            using (StreamReader r = new StreamReader(fileName))
             {
-                fileName = defaultFilename;
-                if (!File.Exists(fileName)) return false;
+                string json = r.ReadToEnd();
+                SettingsModel settings = JsonConvert.DeserializeObject<SettingsModel>(json);
+                Model.Copy(settings);
             }
 
-            try
-            {
-                using (StreamReader r = new StreamReader(fileName))
-                {
-                    string json = r.ReadToEnd();
-                    SettingsModel settings = JsonConvert.DeserializeObject<SettingsModel>(json);
-                    Model.Copy(settings);
-                }
-
-                DataFromModel();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"{ex.Message}: {ex.GetType()}");
-                return false;
-            }
+            DataFromModel();
+            return true;
         }
 
         public bool Save(string fileName)
         {
-            try
-            {
-                DataToModel();
+            DataToModel();
 
-                using StreamWriter file = File.CreateText(fileName);
-                JsonSerializer serializer = new JsonSerializer { Formatting = Formatting.Indented };
-                serializer.Serialize(file, Model);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"{ex.Message}: {ex.GetType()}");
-                return false;
-            }
+            using StreamWriter file = File.CreateText(fileName);
+            JsonSerializer serializer = new JsonSerializer { Formatting = Formatting.Indented };
+            serializer.Serialize(file, Model);
+            return true;
         }
 
         private static void DataToModel()

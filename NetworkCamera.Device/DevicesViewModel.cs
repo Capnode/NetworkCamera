@@ -72,48 +72,27 @@ namespace NetworkCamera.Device
             return Devices.Remove(device);
         }
 
-        public bool Read(string fileName, string defaultFilename)
+        public bool Read(string fileName)
         {
-            if (!File.Exists(fileName))
+            if (!File.Exists(fileName)) return false;
+            using (StreamReader r = new StreamReader(fileName))
             {
-                fileName = defaultFilename;
-                if (!File.Exists(fileName)) return false;
+                string json = r.ReadToEnd();
+                Model.Copy(JsonConvert.DeserializeObject<DevicesModel>(json));
             }
 
-            try
-            {
-                using (StreamReader r = new StreamReader(fileName))
-                {
-                    string json = r.ReadToEnd();
-                    Model.Copy(JsonConvert.DeserializeObject<DevicesModel>(json));
-                }
-
-                DataFromModel();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"{ex.Message}: {ex.GetType()}");
-                return false;
-            }
+            DataFromModel();
+            return true;
         }
 
         public bool Save(string fileName)
         {
-            try
-            {
-                DataToModel();
+            DataToModel();
 
-                using StreamWriter file = File.CreateText(fileName);
-                JsonSerializer serializer = new JsonSerializer { Formatting = Formatting.Indented };
-                serializer.Serialize(file, Model);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"{ex.Message}: {ex.GetType()}");
-                return false;
-            }
+            using StreamWriter file = File.CreateText(fileName);
+            JsonSerializer serializer = new JsonSerializer { Formatting = Formatting.Indented };
+            serializer.Serialize(file, Model);
+            return true;
         }
 
         private void DoSelectedChanged(ITreeViewModel vm)

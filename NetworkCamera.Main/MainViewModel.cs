@@ -79,6 +79,13 @@ namespace NetworkCamera.Main
             SaveConfig(appData);
         }
 
+        public static string GetProgramFolder()
+        {
+            string unc = Assembly.GetExecutingAssembly().Location;
+            string folder = Path.GetDirectoryName(unc);
+            return folder;
+        }
+
         public static string GetAppDataFolder()
         {
             string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -108,17 +115,22 @@ namespace NetworkCamera.Main
 
         private void ReadConfigAsync(string appData)
         {
-            string contentData = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
             try
             {
                 IsBusy = true;
+                string program = GetProgramFolder();
+                CopyDirectory(Path.Combine(program, "Data"), appData, false);
 
-                SettingsViewModel.Read(Path.Combine(appData, "Settings.json"), Path.Combine(contentData, "Settings.json"));
-                DevicesViewModel.Read(Path.Combine(appData, "Devices.json"), Path.Combine(contentData, "Devices.json"));
+                SettingsViewModel.Read(Path.Combine(appData, "Settings.json"));
+                DevicesViewModel.Read(Path.Combine(appData, "Devices.json"));
+                Messenger.Default.Send(new NotificationMessage(string.Empty));
+            }
+            catch (Exception ex)
+            {
+                Messenger.Default.Send(new NotificationMessage($"{ex.GetType()}: {ex.Message}"));
             }
             finally
             {
-                Messenger.Default.Send(new NotificationMessage(string.Empty));
                 IsBusy = false;
             }
         }
@@ -140,6 +152,23 @@ namespace NetworkCamera.Main
             {
                 Messenger.Default.Send(new NotificationMessage(string.Empty));
                 IsBusy = false;
+            }
+        }
+
+        public static void CopyDirectory(string sourceDir, string destDir, bool overwiteFiles)
+        {
+            // Create all of the directories
+            foreach (string dirPath in Directory.GetDirectories(sourceDir, "*", SearchOption.AllDirectories))
+                Directory.CreateDirectory(dirPath.Replace(sourceDir, destDir, StringComparison.OrdinalIgnoreCase));
+
+            // Copy all the files & Replaces any files with the same name
+            foreach (string source in Directory.GetFiles(sourceDir, "*.*", SearchOption.AllDirectories))
+            {
+                string dest = source.Replace(sourceDir, destDir, StringComparison.OrdinalIgnoreCase);
+                if (!File.Exists(dest) || overwiteFiles)
+                {
+                    File.Copy(source, dest, true);
+                }
             }
         }
     }
