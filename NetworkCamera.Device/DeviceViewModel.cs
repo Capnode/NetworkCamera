@@ -145,6 +145,21 @@ namespace NetworkCamera.Device
 
         internal async Task StartTaskAsync()
         {
+            try
+            {
+                await RunModel().ConfigureAwait(true);
+                Messenger.Default.Send(new NotificationMessage(string.Empty));
+            }
+            catch (Exception ex)
+            {
+                string message = $"{ex.GetType()}: {ex.Message}";
+                Debug.WriteLine(message);
+                Messenger.Default.Send(new NotificationMessage(message));
+            }
+        }
+
+        private async Task RunModel()
+        {
             DataToModel();
             DeviceModel model = Model;
             _cancel = new CancellationTokenSource();
@@ -183,7 +198,7 @@ namespace NetworkCamera.Device
             _filter.Dispose();
             _filter = null;
             _cancel = null;
-             Debug.WriteLine($"{Model.Format} stop {model.Source}");
+            Debug.WriteLine($"{Model.Format} stop {model.Source}");
         }
 
         private void StopTask()
