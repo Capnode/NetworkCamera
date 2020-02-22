@@ -38,7 +38,7 @@ namespace NetworkCamera.Device.Internal
         private bool _disposed = false;
         private readonly DeviceModel _device;
         private readonly BackgroundSubtractorMOG2 _segmentor;
-        private readonly Network _network;
+        private readonly Detector _detector;
         private int _index;
         private DateTime _postEventTime;
 
@@ -46,8 +46,8 @@ namespace NetworkCamera.Device.Internal
         {
             _device = device;
             _segmentor = BackgroundSubtractorMOG2.Create(500, 16, true);
-            _network = new Network();
-            _network.LoadModel();
+            _detector = new Detector();
+            _detector.LoadModel();
         }
 
         ~Filter()
@@ -111,7 +111,7 @@ namespace NetworkCamera.Device.Internal
         {
             Mat crop = frame.Clone(rect);
             System.Drawing.Bitmap bitmap = crop.ToBitmap();
-            RecognitionResult[] results = _network.Recognize(bitmap, _minConfidence);
+            RecognitionResult[] results = _detector.Recognize(bitmap, _minConfidence);
             foreach (RecognitionResult result in results)
             {
                 int x0 = (int)(frame.Width * result.Rectangle[0]);
@@ -210,7 +210,7 @@ namespace NetworkCamera.Device.Internal
                 if (disposing)
                 {
                     _segmentor.Dispose();
-                    _network.Dispose();
+                    _detector.Dispose();
                 }
 
                 _disposed = true;

@@ -19,7 +19,6 @@ using NetworkCamera.Core;
 using NetworkCamera.Device.Internal;
 using NetworkCamera.Device.Properties;
 using NetworkCamera.Setting;
-using NetworkCamera.TFLite;
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -41,7 +40,7 @@ namespace NetworkCamera.Device
         private bool _checkAll;
         private IList _selectedItems;
         private Bitmap _bitmap;
-        private readonly Filter _filter;
+        private Filter _filter;
 
         public DeviceViewModel(DevicesViewModel devicesViewModel, DeviceModel deviceModel, SettingsModel settings)
         {
@@ -55,7 +54,6 @@ namespace NetworkCamera.Device
             StopCommand = new RelayCommand(() => DoStopCommand(), () => Active);
 
             DataFromModel();
-            _filter = new Filter(deviceModel);
             DoActiveCommand(Active);
         }
 
@@ -150,6 +148,7 @@ namespace NetworkCamera.Device
             DataToModel();
             DeviceModel model = Model;
             _cancel = new CancellationTokenSource();
+            _filter = new Filter(model);
 
             while (!_cancel.Token.IsCancellationRequested && model.Active)
             {
@@ -181,6 +180,8 @@ namespace NetworkCamera.Device
                 DataFromModel();
             }
 
+            _filter.Dispose();
+            _filter = null;
             _cancel = null;
              Debug.WriteLine($"{Model.Format} stop {model.Source}");
         }
@@ -245,8 +246,8 @@ namespace NetworkCamera.Device
             {
                 if (disposing)
                 {
-                    _cancel.Dispose();
-                    _filter.Dispose();
+                    _cancel?.Dispose();
+                    _filter?.Dispose();
                 }
 
                 _isDisposed = true;
@@ -267,6 +268,7 @@ namespace NetworkCamera.Device
             crop.Intersect(rect);
             BitmapData bData = bitmap.LockBits(crop, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
             OpenCvSharp.Mat frame = new OpenCvSharp.Mat(crop.Height, crop.Width, OpenCvSharp.MatType.CV_8UC3, bData.Scan0, bData.Stride);
+            Debug.Assert(_filter != null);
             _filter.ProcessFrame(frame);
             frame.Dispose();
             bitmap.UnlockBits(bData);

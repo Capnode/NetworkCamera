@@ -21,7 +21,7 @@ using System.Reflection;
 
 namespace NetworkCamera.TFLite
 {
-    public partial class Network : IDisposable
+    public partial class Detector : IDisposable
     {
         private const string labelFileName = "Model/labels.txt";
         private const string modelFileName = "Model/detect.tflite";
@@ -33,11 +33,11 @@ namespace NetworkCamera.TFLite
         private Tensor _inputTensor;
         private Tensor[] _outputTensors;
 
-        public Network()
+        public Detector()
         {
         }
 
-         ~Network()
+         ~Detector()
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
             Dispose(false);
