@@ -18,6 +18,11 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
+using Serilog;
+using System.IO;
+using Serilog.Exceptions;
+using System.Threading.Tasks;
+using System.Globalization;
 
 namespace NetworkCamera.Wpf
 {
@@ -26,6 +31,7 @@ namespace NetworkCamera.Wpf
     /// </summary>
     public partial class App : Application
     {
+        private const long _maxLlogFileSize = 100000;
         private const uint _esContinous = 0x80000000;
         private const uint _esSystemRequired = 0x00000001;
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "<Pending>")]
@@ -37,6 +43,29 @@ namespace NetworkCamera.Wpf
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            // Set working directory
+            string appData = AboutViewModel.GetAppDataFolder();
+            Directory.SetCurrentDirectory(appData);
+
+            // Set logger
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.WithThreadId()
+                .Enrich.WithExceptionDetails()
+                .Enrich.WithExceptionData()
+                .MinimumLevel.Debug()
+                .WriteTo.File(
+                    Path.Combine(appData, AboutModel.AssemblyProduct + ".log"),
+                    rollingInterval: RollingInterval.Infinite,
+                    fileSizeLimitBytes: _maxLlogFileSize)
+                .CreateLogger();
+
+            Log.Information($"Startup \"{AboutModel.AssemblyProduct}\"");
+
+            // Exception Handling Wiring
+            AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
+            TaskScheduler.UnobservedTaskException += UnobservedTaskExceptionHandler;
+
             NetworkCamera.Wpf.Properties.Settings.Default.Reload();
             EnsureBrowserEmulationEnabled("NetworkCamera.exe");
 
@@ -51,17 +80,76 @@ namespace NetworkCamera.Wpf
 
             ViewModelLocator.MainViewModel.SaveAll();
             NetworkCamera.Wpf.Properties.Settings.Default.Save();
+
+            Log.Information($"Exit \"{AboutModel.AssemblyProduct}\"");
+
             base.OnExit(e);
         }
 
-        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs ex)
+        private void UnobservedTaskExceptionHandler(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            Debug.WriteLine("Exception {0} - {1} - {2}", ex.GetType(), ex.Exception.Message, ex.Exception.ToString());
-            Exception iex = ex.Exception.InnerException;
-            if (iex != null)
-                Debug.WriteLine("Exception inner {0} - {1}", iex.GetType(), iex.Message);
+            try
+            {
+                var message = nameof(UnobservedTaskExceptionHandler);
+                e?.SetObserved(); // Prevents the Program from terminating.
 
-            ex.Handled = true; // Continue processing
+                if (e.Exception != null && e.Exception is Exception tuex)
+                {
+                    message = string.Format(CultureInfo.InvariantCulture, "{0} Exception: {1}", message, tuex.Message);
+                    Log.Error(tuex, message);
+                }
+                else if (sender is Exception ex)
+                {
+                    message = string.Format(CultureInfo.InvariantCulture, "{0} Exception: {1}", message, ex.Message);
+                    Log.Error(ex, message);
+                }
+
+                Trace.WriteLine(message);
+            }
+            catch { } // Swallow exception
+        }
+
+        private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        {
+            try
+            {
+                var message = nameof(UnhandledExceptionHandler);
+                if (e.ExceptionObject != null && e.ExceptionObject is Exception uex)
+                {
+                    message = string.Format(CultureInfo.InvariantCulture, "{0} Exception: {1}", message, uex.Message);
+                    Log.Error(uex, message);
+                }
+                else if (sender is Exception ex)
+                {
+                    message = string.Format(CultureInfo.InvariantCulture, "{0} Exception: {1}", message, ex.Message);
+                    Log.Error(ex, message);
+                }
+
+                Trace.WriteLine(message);
+            }
+            catch { } // Swallow exception
+        }
+
+        private void DispatcherUnhandledExceptionHandler(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            try
+            {
+                var message = nameof(DispatcherUnhandledExceptionHandler);
+                if (e.Exception != null && e.Exception is Exception uex)
+                {
+                    message = string.Format(CultureInfo.InvariantCulture, "{0} Exception: {1}", message, uex.Message);
+                    Log.Error(uex, message);
+                }
+                else if (sender is Exception ex)
+                {
+                    message = string.Format(CultureInfo.InvariantCulture, "{0} Exception: {1}", message, ex.Message);
+                    Log.Error(ex, message);
+                }
+
+                Trace.WriteLine(message);
+            }
+            catch { } // Swallow exception
+            e.Handled = true; // Continue processing
         }
 
         /// <summary>

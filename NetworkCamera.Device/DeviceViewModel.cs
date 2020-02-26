@@ -19,6 +19,7 @@ using NetworkCamera.Core;
 using NetworkCamera.Device.Internal;
 using NetworkCamera.Device.Properties;
 using NetworkCamera.Setting;
+using Serilog;
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -152,9 +153,13 @@ namespace NetworkCamera.Device
             }
             catch (Exception ex)
             {
+                Log.Error(ex, "Error running model");
                 string message = $"{ex.GetType()}: {ex.Message}";
                 Debug.WriteLine(message);
                 Messenger.Default.Send(new NotificationMessage(message));
+
+                Model.Active = false;
+                DataFromModel();
             }
         }
 

@@ -15,6 +15,8 @@
 using GalaSoft.MvvmLight;
 using System;
 using System.Globalization;
+using System.IO;
+using System.Reflection;
 
 namespace NetworkCamera.Main
 {
@@ -33,6 +35,33 @@ namespace NetworkCamera.Main
             Version = String.Format(CultureInfo.InvariantCulture, "Version: {0}", AboutModel.AssemblyVersion);
             Copyright = AboutModel.AssemblyCopyright;
             Description = AboutModel.AssemblyDescription;
+        }
+
+        public static string GetProgramFolder()
+        {
+            string unc = Assembly.GetExecutingAssembly().Location;
+            string folder = Path.GetDirectoryName(unc);
+            return folder;
+        }
+
+        public static string GetAppDataFolder()
+        {
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string company = AboutModel.AssemblyCompany.Split(' ')[0];
+            string product = AboutModel.AssemblyTitle.Split('.')[0];
+            string path = Path.Combine(appData, company, product);
+            Directory.CreateDirectory(path);
+            return path;
+        }
+
+        public static string GetUserDataFolder()
+        {
+            string userData = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string company = AboutModel.AssemblyCompany.Split(' ')[0];
+            string product = AboutModel.AssemblyTitle.Split('.')[0];
+            string path = Path.Combine(userData, company, product);
+            Directory.CreateDirectory(path);
+            return path;
         }
     }
 }

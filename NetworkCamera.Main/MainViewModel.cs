@@ -14,7 +14,6 @@
 
 using System;
 using System.IO;
-using System.Reflection;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -44,12 +43,8 @@ namespace NetworkCamera.Main
             SaveCommand = new RelayCommand(() => SaveAll(), () => !IsBusy);
             Messenger.Default.Register<NotificationMessage>(this, OnStatusMessage);
 
-            // Set working directory
-            string appData = GetAppDataFolder();
-            Directory.SetCurrentDirectory(appData);
-
             // Read configuration
-            ReadConfigAsync(appData);
+            ReadConfigAsync();
         }
 
         public RelayCommand SaveCommand { get; }
@@ -75,35 +70,8 @@ namespace NetworkCamera.Main
 
         public void SaveAll()
         {
-            string appData = GetAppDataFolder();
+            string appData = AboutViewModel.GetAppDataFolder();
             SaveConfig(appData);
-        }
-
-        public static string GetProgramFolder()
-        {
-            string unc = Assembly.GetExecutingAssembly().Location;
-            string folder = Path.GetDirectoryName(unc);
-            return folder;
-        }
-
-        public static string GetAppDataFolder()
-        {
-            string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string company = AboutModel.AssemblyCompany.Split(' ')[0];
-            string product = AboutModel.AssemblyTitle.Split('.')[0];
-            string path = Path.Combine(appData, company, product);
-            Directory.CreateDirectory(path);
-            return path;
-        }
-
-        public static string GetUserDataFolder()
-        {
-            string userData = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string company = AboutModel.AssemblyCompany.Split(' ')[0];
-            string product = AboutModel.AssemblyTitle.Split('.')[0];
-            string path = Path.Combine(userData, company, product);
-            Directory.CreateDirectory(path);
-            return path;
         }
 
         private void OnStatusMessage(NotificationMessage message)
@@ -113,12 +81,13 @@ namespace NetworkCamera.Main
                 return;
         }
 
-        private void ReadConfigAsync(string appData)
+        private void ReadConfigAsync()
         {
             try
             {
                 IsBusy = true;
-                string program = GetProgramFolder();
+                string appData = AboutViewModel.GetAppDataFolder();
+                string program = AboutViewModel.GetProgramFolder();
                 CopyDirectory(Path.Combine(program, "Data"), appData, false);
 
                 SettingsViewModel.Read(Path.Combine(appData, "Settings.json"));
@@ -155,7 +124,7 @@ namespace NetworkCamera.Main
             }
         }
 
-        public static void CopyDirectory(string sourceDir, string destDir, bool overwiteFiles)
+        private static void CopyDirectory(string sourceDir, string destDir, bool overwiteFiles)
         {
             // Create all of the directories
             foreach (string dirPath in Directory.GetDirectories(sourceDir, "*", SearchOption.AllDirectories))
