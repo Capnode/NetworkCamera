@@ -31,7 +31,7 @@
     <WarningsAsErrors />
     <CodeAnalysisRuleSet />
     <NoWarn>NU1701;NU1702</NoWarn>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
