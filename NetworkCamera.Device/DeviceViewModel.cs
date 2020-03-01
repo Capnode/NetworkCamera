@@ -283,9 +283,14 @@ namespace NetworkCamera.Device
                 return;
             }
 
-            var rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
             Rectangle crop = Crop;
+            var rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
             crop.Intersect(rect);
+            if (crop.IsEmpty)
+            {
+                crop = rect;
+            }
+
             BitmapData bData = bitmap.LockBits(crop, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
             OpenCvSharp.Mat frame = new OpenCvSharp.Mat(crop.Height, crop.Width, OpenCvSharp.MatType.CV_8UC3, bData.Scan0, bData.Stride);
             Debug.Assert(_filter != null);
