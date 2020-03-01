@@ -66,7 +66,7 @@ namespace NetworkCamera.Device
 
         internal bool DoDeleteDevice(DeviceViewModel device)
         {
-            if (device != null) throw new ArgumentNullException(nameof(device));
+            if (device == null) throw new ArgumentNullException(nameof(device));
             SelectedItem = null;
             return Devices.Remove(device);
         }

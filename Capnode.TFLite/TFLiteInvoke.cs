@@ -37,13 +37,6 @@ namespace Capnode.TFLite
         public delegate int TfliteErrorCallback(int status, IntPtr errMsg);
 
         /// <summary>
-        /// Redirect tensorflow lite error.
-        /// </summary>
-        /// <param name="errorHandler">The error handler</param>
-        [DllImport(TfliteDll, CallingConvention = TFCallingConvention, EntryPoint = "RedirectError")]
-        public static extern void RedirectError(TfliteErrorCallback errorHandler);
-
-        /// <summary>
         /// The Tensorflow native api calling convention
         /// </summary>
         public const CallingConvention TFCallingConvention = CallingConvention.Cdecl;
@@ -91,5 +84,12 @@ namespace Capnode.TFLite
 
         [DllImport(TfliteDll, CallingConvention = TFCallingConvention)]
         internal static extern IntPtr GetLiteVersion();
+
+        /// <summary>
+        /// Redirect tensorflow lite error.
+        /// </summary>
+        /// <param name="errorHandler">The error handler</param>
+        [DllImport(TfliteDll, CallingConvention = TFCallingConvention, EntryPoint = "RedirectError")]
+        private static extern void RedirectError(TfliteErrorCallback errorHandler);
     }
 }

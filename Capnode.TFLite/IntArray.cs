@@ -22,7 +22,7 @@ namespace Capnode.TFLite
     /// </summary>
     public class IntArray : Capnode.TFLite.UnmanagedObject
     {
-        private bool _needDispose;
+        private readonly bool _needDispose;
 
         /// <summary>
         /// Create an int array of the given size

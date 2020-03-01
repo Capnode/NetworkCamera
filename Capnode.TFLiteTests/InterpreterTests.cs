@@ -78,8 +78,10 @@ namespace Capnode.TFLite.Tests
                 if (classes[i] == 0) //background class
                     continue;
 
-                RecognitionResult r = new RecognitionResult();
-                r.Class = (int)Math.Round(classes[i]);
+                RecognitionResult r = new RecognitionResult
+                {
+                    Class = (int)Math.Round(classes[i])
+                };
                 r.Label = _labels[r.Class + labelOffset];
                 r.Score = scores[i];
                 float x0 = outputLocations[0, i, 1];

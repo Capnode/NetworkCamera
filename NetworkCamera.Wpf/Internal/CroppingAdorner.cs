@@ -94,11 +94,7 @@ namespace NetworkCamera.Wpf.Internal
             double dpiY = m.M22 * 96;
 
             // 2) create RenderTargetBitmap
-            RenderTargetBitmap elementBitmap =
-                new RenderTargetBitmap((int)_originalCanvas.ActualWidth, (int)_originalCanvas.ActualHeight, dpiX, dpiY,
-                    PixelFormats.Pbgra32);
-
-            elementBitmap = new RenderTargetBitmap((int)_originalCanvas.RenderSize.Width,
+            RenderTargetBitmap elementBitmap = new RenderTargetBitmap((int)_originalCanvas.RenderSize.Width,
                 (int)_originalCanvas.RenderSize.Height, dpiX, dpiY, PixelFormats.Default);
 
             //Important

@@ -24,22 +24,16 @@ namespace Capnode.TFLite
         ///<summary> Track whether Dispose has been called. </summary>
         private bool _disposed;
 
-        /// <summary>
-        /// The dispose function that implements IDisposable interface
-        /// </summary>
-        public void Dispose()
+        ~DisposableObject()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(false);
         }
 
         /// <summary>
-        /// Returns true if the object has been disposed.
+        /// Release the unmanaged resources
         /// </summary>
-        public bool Disposed
-        {
-            get { return _disposed; }
-        }
+        protected abstract void DisposeObject();
 
         ///<summary> 
         /// Dispose(bool disposing) executes in two distinct scenarios.
@@ -55,7 +49,7 @@ namespace Capnode.TFLite
         /// runtime from inside the finalizer and you should not reference
         /// other objects. Only unmanaged resources can be disposed.
         /// </param>
-        private void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             // Check to see if Dispose has already been called.
             if (!_disposed)
@@ -82,16 +76,12 @@ namespace Capnode.TFLite
         }
 
         /// <summary>
-        /// Release the unmanaged resources
+        /// The dispose function that implements IDisposable interface
         /// </summary>
-        protected abstract void DisposeObject();
-
-        /// <summary>
-        /// Destructor
-        /// </summary>
-        ~DisposableObject()
+        public void Dispose()
         {
-            Dispose(false);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

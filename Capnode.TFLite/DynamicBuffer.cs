@@ -49,7 +49,7 @@ namespace Capnode.TFLite
         /// <param name="tensor">The string tensor</param>
         public void WriteToTensor(Tensor tensor, IntArray newShape = null)
         {
-            TfLiteInvoke.DynamicBufferWriteToTensor(_ptr, tensor, newShape == null ? IntPtr.Zero : newShape);
+            TfLiteInvoke.DynamicBufferWriteToTensor(_ptr, tensor, newShape ?? IntPtr.Zero);
         }
         
         /// <summary>

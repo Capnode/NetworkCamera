@@ -22,7 +22,7 @@ namespace Capnode.TFLite
     /// <summary>
     /// Platform specific implementation of Image IO
     /// </summary>
-    public class NativeImageIO
+    public static class NativeImageIO
     {
         /// <summary>
         /// Read an image file, covert the data and save it to the native pointer
@@ -240,10 +240,12 @@ namespace Capnode.TFLite
             using (MemoryStream ms = new MemoryStream())
             {
                 img.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
-                JpegData result = new JpegData();
-                result.Raw = ms.ToArray();
-                result.Width = img.Size.Width;
-                result.Height = img.Size.Height;
+                JpegData result = new JpegData
+                {
+                    Raw = ms.ToArray(),
+                    Width = img.Size.Width,
+                    Height = img.Size.Height
+                };
                 return result;
             }
         }
