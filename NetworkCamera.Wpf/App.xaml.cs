@@ -24,6 +24,10 @@ using Serilog.Exceptions;
 using System.Threading.Tasks;
 using System.Globalization;
 
+/// <summary>
+/// Network Camera application
+/// Icon converter: https://convertico.com/
+/// </summary>
 namespace NetworkCamera.Wpf
 {
     /// <summary>

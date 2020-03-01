@@ -223,9 +223,19 @@ namespace NetworkCamera.Wpf.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap NetcamBlack {
+        internal static System.Drawing.Bitmap Netcam {
             get {
-                object obj = ResourceManager.GetObject("NetcamBlack", resourceCulture);
+                object obj = ResourceManager.GetObject("Netcam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Netcam1080 {
+            get {
+                object obj = ResourceManager.GetObject("Netcam1080", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -233,30 +243,10 @@ namespace NetworkCamera.Wpf.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon NetcamBlack1 {
+        internal static System.Drawing.Icon NetcamIcon {
             get {
-                object obj = ResourceManager.GetObject("NetcamBlack1", resourceCulture);
+                object obj = ResourceManager.GetObject("NetcamIcon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap NetcamBlack1080 {
-            get {
-                object obj = ResourceManager.GetObject("NetcamBlack1080", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap NetcamWhite {
-            get {
-                object obj = ResourceManager.GetObject("NetcamWhite", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

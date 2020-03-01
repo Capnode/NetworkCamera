@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <StartupObject>NetworkCamera.Wpf.App</StartupObject>
-    <ApplicationIcon>Resources\NetcamBlack.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\NetcamIcon.ico</ApplicationIcon>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
     <Platforms>AnyCPU;x64;x86</Platforms>
@@ -72,7 +72,6 @@
     <None Remove="Resources\Info.png" />
     <None Remove="Resources\MoveDown.png" />
     <None Remove="Resources\MoveUp.png" />
-    <None Remove="Resources\Netcam.png" />
     <None Remove="Resources\NetcamBlue.ico" />
     <None Remove="Resources\New.png" />
     <None Remove="Resources\Refresh.png" />
