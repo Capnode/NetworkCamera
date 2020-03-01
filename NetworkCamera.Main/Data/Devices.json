@@ -64,7 +64,7 @@
       "Folder": "",
       "Notification": null,
       "Active": false,
-      "Crop": "8, 691, 539, 395"
+      "Crop": "211, 620, 533, 535"
     },
     {
       "Name": "Prudue university, IN",
@@ -98,6 +98,50 @@
       "Notification": null,
       "Active": false,
       "Crop": "60, 137, 486, 329"
+    },
+    {
+      "Name": "Reno, NV",
+      "Format": "Mjpeg",
+      "Source": "http://71.84.120.26/axis-cgi/mjpg/video.cgi",
+      "Login": "",
+      "Password": "",
+      "Folder": null,
+      "Notification": null,
+      "Active": false,
+      "Crop": "906, 575, 891, 603"
+    },
+    {
+      "Name": "Adygeya, Russia",
+      "Format": "Mjpeg",
+      "Source": "http://46.229.128.35:81/axis-cgi/mjpg/video.cgi",
+      "Login": "",
+      "Password": "",
+      "Folder": null,
+      "Notification": null,
+      "Active": false,
+      "Crop": "234, 61, 463, 475"
+    },
+    {
+      "Name": "Huxton TX",
+      "Format": "Mjpeg",
+      "Source": "http://166.241.215.209:83/axis-cgi/mjpg/video.cgi",
+      "Login": "",
+      "Password": "",
+      "Folder": null,
+      "Notification": null,
+      "Active": false,
+      "Crop": "50, 83, 343, 183"
+    },
+    {
+      "Name": "Celina USA",
+      "Format": "Mjpeg",
+      "Source": "http://209.143.54.211/axis-cgi/mjpg/video.cgi",
+      "Login": "",
+      "Password": "",
+      "Folder": null,
+      "Notification": null,
+      "Active": false,
+      "Crop": "63, 116, 963, 541"
     }
   ]
 }
