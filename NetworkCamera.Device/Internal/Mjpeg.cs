@@ -24,8 +24,9 @@ namespace NetworkCamera.Device.Internal
     using System.Text;
     using System.Threading;
     using System.Net;
-    using System.Diagnostics;
     using System.Globalization;
+    using Serilog;
+    using System.Diagnostics;
 
     internal class Mjpeg : IDevice
     {
@@ -63,11 +64,6 @@ namespace NetworkCamera.Device.Internal
             try
             {
                 Run(device, deviceEvent, token);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"{GetType().Name} {device.Source} {ex.GetType()}:{ex.Message}");
-                device.Active = false;
             }
             finally
             {

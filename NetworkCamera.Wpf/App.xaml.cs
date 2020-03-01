@@ -15,12 +15,10 @@
 using NetworkCamera.Main;
 using Microsoft.Win32;
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using Serilog;
 using System.IO;
-using Serilog.Exceptions;
 using System.Threading.Tasks;
 using System.Globalization;
 
@@ -54,10 +52,10 @@ namespace NetworkCamera.Wpf
 
             // Set logger
             Log.Logger = new LoggerConfiguration()
-                .Enrich.WithThreadId()
-                .Enrich.WithExceptionDetails()
-                .Enrich.WithExceptionData()
-                .MinimumLevel.Debug()
+#if DEBUG
+                .MinimumLevel.Verbose()
+                .WriteTo.Debug()
+#endif
                 .WriteTo.File(
                     Path.Combine(appData, AboutModel.AssemblyProduct + ".log"),
                     rollingInterval: RollingInterval.Infinite,
@@ -107,8 +105,6 @@ namespace NetworkCamera.Wpf
                     message = string.Format(CultureInfo.InvariantCulture, "{0} Exception: {1}", message, ex.Message);
                     Log.Error(ex, message);
                 }
-
-                Trace.WriteLine(message);
             }
             catch { } // Swallow exception
         }
@@ -128,8 +124,6 @@ namespace NetworkCamera.Wpf
                     message = string.Format(CultureInfo.InvariantCulture, "{0} Exception: {1}", message, ex.Message);
                     Log.Error(ex, message);
                 }
-
-                Trace.WriteLine(message);
             }
             catch { } // Swallow exception
         }
@@ -149,8 +143,6 @@ namespace NetworkCamera.Wpf
                     message = string.Format(CultureInfo.InvariantCulture, "{0} Exception: {1}", message, ex.Message);
                     Log.Error(ex, message);
                 }
-
-                Trace.WriteLine(message);
             }
             catch { } // Swallow exception
             e.Handled = true; // Continue processing

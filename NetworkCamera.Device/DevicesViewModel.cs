@@ -16,11 +16,10 @@ using NetworkCamera.Core;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
-using System;
-using System.Diagnostics;
 using System.IO;
 using NetworkCamera.Setting;
 using System.Collections.ObjectModel;
+using System;
 
 namespace NetworkCamera.Device
 {
@@ -67,7 +66,7 @@ namespace NetworkCamera.Device
 
         internal bool DoDeleteDevice(DeviceViewModel device)
         {
-            Debug.Assert(device != null);
+            if (device != null) throw new ArgumentNullException(nameof(device));
             SelectedItem = null;
             return Devices.Remove(device);
         }

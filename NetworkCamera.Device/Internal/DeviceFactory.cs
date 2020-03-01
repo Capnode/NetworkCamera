@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
+using Serilog;
 using System;
-using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 
@@ -35,20 +34,7 @@ namespace NetworkCamera.Device.Internal
                 return deviceModel;
             }
 
-            try
-            {
-                device.Main(deviceModel, deviceEvent, token);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(string.Format(
-                    CultureInfo.InvariantCulture, 
-                    "{0}: {1}",
-                    ex.GetType(),
-                    ex.Message));
-                deviceModel.Active = false;
-            }
-
+            device.Main(deviceModel, deviceEvent, token);
             return deviceModel;
         }
 
@@ -61,17 +47,12 @@ namespace NetworkCamera.Device.Internal
 
             if (type == null)
             {
-                Debug.WriteLine($"Provider {name} not found");
+                Log.Warning($"Provider {name} not found");
                 return null;
             }
 
             IDevice provider = (IDevice)Activator.CreateInstance(type);
-            if (provider == null)
-            {
-                Debug.WriteLine($"Can not create provider {name}");
-                return null;
-            }
-
+            if (provider == null) throw new ApplicationException($"Can not create provider {name}");
             return provider;
         }
     }

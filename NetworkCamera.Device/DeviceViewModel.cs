@@ -153,11 +153,9 @@ namespace NetworkCamera.Device
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Error running model");
-                string message = $"{ex.GetType()}: {ex.Message}";
-                Debug.WriteLine(message);
+                string message = $"Error running device: {Model.Name}";
+                Log.Error(ex, message);
                 Messenger.Default.Send(new NotificationMessage(message));
-
                 Model.Active = false;
                 DataFromModel();
             }
@@ -172,27 +170,13 @@ namespace NetworkCamera.Device
 
             while (!_cancel.Token.IsCancellationRequested && model.Active)
             {
-                Debug.WriteLine($"{model.Format} start {model.Source}");
-                try
-                {
-                    _factory = new DeviceFactory();
-                    _cancel = new CancellationTokenSource();
-                    await Task.Run(() => model = _factory.Run(model, DeviceEvent, _cancel.Token), _cancel.Token)
-                        .ConfigureAwait(true);
-                    _factory = null;
-                }
-                catch (AppDomainUnloadedException)
-                {
-                    Debug.WriteLine($"Device {model.Name} canceled by user");
-                    _factory = null;
-                    model.Active = false;
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"{ex.GetType()}: {ex.Message}");
-                    _factory = null;
-                    model.Active = false;
-                }
+                Log.Verbose($"{model.Format} start {model.Source}");
+                _factory = new DeviceFactory();
+                _cancel = new CancellationTokenSource();
+                await Task.Run(() => model = _factory
+                    .Run(model, DeviceEvent, _cancel.Token), _cancel.Token)
+                    .ConfigureAwait(true);
+                _factory = null;
 
                 // Update view
                 Model = null;
@@ -203,7 +187,7 @@ namespace NetworkCamera.Device
             _filter.Dispose();
             _filter = null;
             _cancel = null;
-            Debug.WriteLine($"{Model.Format} stop {model.Source}");
+            Log.Verbose($"{Model.Format} stop {model.Source}");
         }
 
         private void StopTask()

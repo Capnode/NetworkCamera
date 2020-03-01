@@ -13,7 +13,6 @@
  */
 
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 
@@ -23,21 +22,16 @@ namespace NetworkCamera.Device.Internal
     {
         public void Main(DeviceModel device, DeviceEventHandler deviceEvent, CancellationToken token)
         {
-            if (device == null) throw new ArgumentNullException(nameof(device));
+            if (device != null) throw new ArgumentNullException(nameof(device));
             if (string.IsNullOrWhiteSpace(device.Source)) throw new ArgumentException(nameof(device.Source));
             if (deviceEvent == null) throw new ArgumentNullException(nameof(deviceEvent));
             if (token == null) throw new ArgumentNullException(nameof(token));
 
             try
             {
-                using Bitmap bitmap = new Bitmap(System.Drawing.Image.FromFile(device.Source));
+                using Bitmap bitmap = new Bitmap(Image.FromFile(device.Source));
                 deviceEvent(this, new DeviceEventArgs(bitmap));
                 token.WaitHandle.WaitOne();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"{GetType().Name} {device.Source} {ex.GetType()}:{ex.Message}");
-                device.Active = false;
             }
             finally
             {

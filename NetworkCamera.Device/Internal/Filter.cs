@@ -17,9 +17,9 @@ using NetworkCamera.TFLite;
 using Newtonsoft.Json;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
+using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -118,7 +118,7 @@ namespace NetworkCamera.Device.Internal
                 int y0 = (int)(frame.Height * result.Rectangle[1]);
                 int x1 = (int)(frame.Width * result.Rectangle[2]);
                 int y1 = (int)(frame.Height * result.Rectangle[3]);
-                Debug.WriteLine($"{result.Label} {result.Score:0.####} W:{x1 - x0} H:{y1 - y0}");
+                Log.Verbose($"{result.Label} {result.Score:0.####} W:{x1 - x0} H:{y1 - y0}");
 
                 yield return new Classification
                 {
@@ -200,7 +200,6 @@ namespace NetworkCamera.Device.Internal
             var uri = new Uri(_device.Notification);
             using StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
             HttpResponseMessage result = await client.PostAsync(uri, content).ConfigureAwait(true);
-            Debug.WriteLine(json);
         }
 
         protected virtual void Dispose(bool disposing)
