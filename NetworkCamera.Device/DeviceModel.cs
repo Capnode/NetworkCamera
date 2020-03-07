@@ -23,6 +23,11 @@ namespace NetworkCamera.Device
     {
         private string _format;
 
+        public DeviceModel()
+        {
+            Format = nameof(Mjpeg);
+        }
+
         [Category("Device")]
         [DisplayName("Device name")]
         [Description("Name of the device.")]
@@ -53,6 +58,20 @@ namespace NetworkCamera.Device
         [Browsable(false)]
         [ReadOnly(false)]
         public string Source { get; set; } = string.Empty;
+
+        [Category("Device")]
+        [DisplayName("Motion detection")]
+        [Description("Activate motion detection")]
+        [Browsable(true)]
+        [ReadOnly(false)]
+        public bool MotionDetection { get; set; }
+
+        [Category("Device")]
+        [DisplayName("Item classification")]
+        [Description("Activate item type classification")]
+        [Browsable(true)]
+        [ReadOnly(false)]
+        public bool ItemClassification { get; set; }
 
         [Category("Account")]
         [DisplayName("Login")]

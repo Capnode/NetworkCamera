@@ -58,21 +58,23 @@ namespace NetworkCamera.Device.Internal
 
         internal void ProcessFrame(Mat frame)
         {
-            IEnumerable<Rect> motion = DetectMotion(frame);
-            if (!motion.Any())
+            IEnumerable<Rect> motion = Enumerable.Empty<Rect>();
+            if (_device.MotionDetection)
             {
-                return;
+                motion = DetectMotion(frame);
+                if (!motion.Any()) return;
             }
 
-            IEnumerable<Classification> classification = ClassifyFrame(frame, new Rect(0, 0, frame.Width, frame.Height));
+            IEnumerable<Classification> classification = Enumerable.Empty<Classification>();
+            if (_device.ItemClassification)
+            {
+                classification = ClassifyFrame(frame, new Rect(0, 0, frame.Width, frame.Height));
+                if (!classification.Any()) return;
+            }
+
+            if (!motion.Any() && !classification.Any()) return;
 
             DrawMotion(frame, motion);
-
-            if (!classification.Any())
-            {
-                return;
-            }
-
             DrawClassification(frame, classification);
 
             if (!string.IsNullOrEmpty(_device.Folder))
