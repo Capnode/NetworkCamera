@@ -7,7 +7,7 @@
     <PackageId>NetworkCamera</PackageId>
     <Product>Network Camera</Product>
     <Company>Capnode AB</Company>
-    <Version>1.1.0</Version>
+    <Version>1.1.2</Version>
     <Authors>Capnode AB</Authors>
     <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
     <Platforms>AnyCPU;x64;x86</Platforms>
