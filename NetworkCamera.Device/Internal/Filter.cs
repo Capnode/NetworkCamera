@@ -12,8 +12,12 @@
  * limitations under the License.
  */
 
+using Capnode.TFLite;
+using NetworkCamera.TFLite;
 using Newtonsoft.Json;
 using OpenCvSharp;
+using OpenCvSharp.Extensions;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -29,10 +33,12 @@ namespace NetworkCamera.Device.Internal
     internal class Filter : IDisposable
     {
         private const double _minPostMinutes = 10;
+        private const float _minConfidence = 0.6F;
 
         private bool _disposed = false;
         private readonly DeviceModel _device;
         private readonly BackgroundSubtractorMOG2 _segmentor;
+        private readonly Detector _detector;
         private int _index;
         private DateTime _postEventTime;
 
@@ -40,6 +46,8 @@ namespace NetworkCamera.Device.Internal
         {
             _device = device;
             _segmentor = BackgroundSubtractorMOG2.Create(500, 16, true);
+            _detector = new Detector();
+            _detector.LoadModel();
         }
 
         ~Filter()
@@ -57,9 +65,17 @@ namespace NetworkCamera.Device.Internal
                 if (!motion.Any()) return;
             }
 
-            if (!motion.Any()) return;
+            IEnumerable<Classification> classification = Enumerable.Empty<Classification>();
+            if (_device.ItemClassification)
+            {
+                classification = ClassifyFrame(frame, new Rect(0, 0, frame.Width, frame.Height));
+                if (!classification.Any()) return;
+            }
+
+            if (!motion.Any() && !classification.Any()) return;
 
             DrawMotion(frame, motion);
+            DrawClassification(frame, classification);
 
             if (!string.IsNullOrEmpty(_device.Folder))
             {
@@ -90,6 +106,28 @@ namespace NetworkCamera.Device.Internal
             foreach (Point[] contour in contours)
             {
                 yield return Cv2.BoundingRect(contour);
+            }
+        }
+
+        private IEnumerable<Classification> ClassifyFrame(Mat frame, Rect rect)
+        {
+            Mat crop = frame.Clone(rect);
+            System.Drawing.Bitmap bitmap = crop.ToBitmap();
+            RecognitionResult[] results = _detector.Recognize(bitmap, _minConfidence);
+            foreach (RecognitionResult result in results)
+            {
+                int x0 = (int)(frame.Width * result.Rectangle[0]);
+                int y0 = (int)(frame.Height * result.Rectangle[1]);
+                int x1 = (int)(frame.Width * result.Rectangle[2]);
+                int y1 = (int)(frame.Height * result.Rectangle[3]);
+                Log.Verbose($"{result.Label} {result.Score:0.####} W:{x1 - x0} H:{y1 - y0}");
+
+                yield return new Classification
+                {
+                    Label = result.Label,
+                    Score = result.Score,
+                    Rectangle = new Rect(rect.Left + x0, rect.Top + y0, x1 - x0, y1 - y0),
+                };
             }
         }
 
@@ -173,6 +211,7 @@ namespace NetworkCamera.Device.Internal
                 if (disposing)
                 {
                     _segmentor.Dispose();
+                    _detector.Dispose();
                 }
 
                 _disposed = true;
