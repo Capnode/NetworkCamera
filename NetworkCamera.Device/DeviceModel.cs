@@ -66,13 +66,6 @@ namespace NetworkCamera.Device
         [ReadOnly(false)]
         public bool MotionDetection { get; set; }
 
-        [Category("Device")]
-        [DisplayName("Item classification")]
-        [Description("Activate item type classification")]
-        [Browsable(true)]
-        [ReadOnly(false)]
-        public bool ItemClassification { get; set; }
-
         [Category("Account")]
         [DisplayName("Login")]
         [Description("User login.")]
