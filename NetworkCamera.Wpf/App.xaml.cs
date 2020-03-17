@@ -155,15 +155,18 @@ namespace NetworkCamera.Wpf
         {
             try
             {
-                using var rk = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION", true);
-                if (!uninstall)
+                RegistryKey rk = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION", true);
+                if (rk == null) return;
+                if (uninstall)
+                {
+                    rk.DeleteValue(exename);
+                }
+                else
                 {
                     dynamic value = rk.GetValue(exename);
                     if (value == null)
                         rk.SetValue(exename, (uint)11001, RegistryValueKind.DWord);
                 }
-                else
-                    rk.DeleteValue(exename);
             }
             finally
             {
