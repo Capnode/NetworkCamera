@@ -1,5 +1,6 @@
 Network camera
 =========
+<a href='//www.microsoft.com/store/apps/9NBLGGH4QPHB?cid=storebadge&ocid=badge'><img src='https://developer.microsoft.com/en-us/store/badges/images/English_get-it-from-MS.png' alt='Install from Microsoft Store' width="284" height="104"/></a>
 
 ## Introduction ##
 Windows desktop application for network cameras.
