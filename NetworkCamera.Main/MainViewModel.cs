@@ -18,6 +18,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using NetworkCamera.Device;
+using NetworkCamera.Service;
 using NetworkCamera.Setting;
 
 namespace NetworkCamera.Main
@@ -35,8 +36,12 @@ namespace NetworkCamera.Main
         /// </summary>
         public MainViewModel(
             SettingsViewModel settingsViewModel,
-            DevicesViewModel devicesViewModel)
+            DevicesViewModel devicesViewModel,
+            InferenceServer inferenceServer)
         {
+            if (settingsViewModel == null) throw new ArgumentNullException(nameof(settingsViewModel));
+            if (devicesViewModel == null) throw new ArgumentNullException(nameof(devicesViewModel));
+            if (inferenceServer == null) throw new ArgumentNullException(nameof(inferenceServer));
             SettingsViewModel = settingsViewModel;
             DevicesViewModel = devicesViewModel;
 
@@ -45,6 +50,9 @@ namespace NetworkCamera.Main
 
             // Read configuration
             ReadConfigAsync();
+
+            // Start services
+            inferenceServer.Startup(settingsViewModel.Model.InferenceServer);
         }
 
         public RelayCommand SaveCommand { get; }

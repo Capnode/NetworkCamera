@@ -29,6 +29,7 @@
 using GalaSoft.MvvmLight.Ioc;
 using NetworkCamera.Device;
 using NetworkCamera.Setting;
+using NetworkCamera.Service;
 
 namespace NetworkCamera.Main
 {
@@ -45,6 +46,7 @@ namespace NetworkCamera.Main
         public ViewModelLocator()
         {
             // Register types
+            SimpleIoc.Default.Register<InferenceServer>();
             SimpleIoc.Default.Register<SettingsModel>();
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<SettingsViewModel>();
