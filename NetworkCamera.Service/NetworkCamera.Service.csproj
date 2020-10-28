@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="tensorflow-serving-client" Version="2.3.0" />
+  </ItemGroup>
+
 </Project>
