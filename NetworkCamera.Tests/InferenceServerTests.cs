@@ -14,13 +14,14 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetworkCamera.Service;
+using System;
 
 namespace NetworkCamera.Tests.Service
 {
     [TestClass()]
     public class InferenceServerTests
     {
-        private const string _host ="172.25.75.141:8501";
+        private const string _host ="172.25.75.141:9001";
         private InferenceServer _dut;
 
         [TestInitialize()]
@@ -32,6 +33,13 @@ namespace NetworkCamera.Tests.Service
         [TestCleanup]
         public void Cleanup()
         {
+        }
+
+        [TestMethod()]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Startup_with_empty_host()
+        {
+            _dut.Startup(string.Empty);
         }
 
         [TestMethod()]
