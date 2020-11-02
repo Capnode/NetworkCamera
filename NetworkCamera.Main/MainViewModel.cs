@@ -21,6 +21,7 @@ using GalaSoft.MvvmLight.Messaging;
 using NetworkCamera.Device;
 using NetworkCamera.Service.Inference;
 using NetworkCamera.Setting;
+using Serilog;
 
 namespace NetworkCamera.Main
 {
@@ -32,6 +33,7 @@ namespace NetworkCamera.Main
         private bool _isBusy;
         private string _statusMessage;
         private readonly InferenceServer _inferenceServer;
+        private readonly Task _startupTask;
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -51,10 +53,7 @@ namespace NetworkCamera.Main
             SaveCommand = new RelayCommand(() => SaveAll(), () => !IsBusy);
             Messenger.Default.Register<NotificationMessage>(this, OnStatusMessage);
 
-            // Read configuration
-            ReadConfigAsync();
-
-//            StartServicesAsync().Wait();
+            _startupTask = StartupAsync();
         }
 
         public RelayCommand SaveCommand { get; }
@@ -91,7 +90,16 @@ namespace NetworkCamera.Main
                 return;
         }
 
-        private void ReadConfigAsync()
+        private async Task StartupAsync()
+        {
+            // Read configuration
+            ReadConfig();
+
+            await StartServicesAsync().ConfigureAwait(true);
+            Messenger.Default.Send(new NotificationMessage("Startup complete"));
+        }
+
+        private void ReadConfig()
         {
             try
             {
@@ -106,7 +114,9 @@ namespace NetworkCamera.Main
             }
             catch (Exception ex)
             {
-                Messenger.Default.Send(new NotificationMessage($"{ex.GetType()}: {ex.Message}"));
+                string message = $"{ex.GetType()}: {ex.Message}";
+                Messenger.Default.Send(new NotificationMessage(message));
+                Log.Error(ex, message);
             }
             finally
             {
@@ -140,6 +150,7 @@ namespace NetworkCamera.Main
             {
                 string message = $"Source directory {sourceDir} does not exist";
                 Messenger.Default.Send(new NotificationMessage(message));
+                Log.Error(message);
                 return;
             }
 
@@ -173,6 +184,7 @@ namespace NetworkCamera.Main
             {
                 string message = $"Error during startup: {ex.GetType()} - {ex.Message}";
                 Messenger.Default.Send(new NotificationMessage(message));
+                Log.Error(ex, message);
             }
         }
     }

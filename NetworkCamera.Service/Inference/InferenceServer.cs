@@ -46,7 +46,6 @@ namespace NetworkCamera.Service.Inference
 
         public InferenceServer()
         {
-//            Connect(_host, SsdMobilenetV2Model, null).Wait();
         }
 
         public async Task Connect(string host, string model, string labels, string certificate = null)
