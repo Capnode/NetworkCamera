@@ -28,6 +28,9 @@ namespace NetworkCamera.Main
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
+        private const string _labelFile = @"TestData/coco_labels";
+        private const string _model = @"testdata/ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite";
+        
         private bool _isBusy;
         private string _statusMessage;
 
@@ -52,7 +55,7 @@ namespace NetworkCamera.Main
             ReadConfigAsync();
 
             // Start services
-            inferenceServer.Startup(settingsViewModel.Model.InferenceServer);
+            inferenceServer.Connect(settingsViewModel.Model.InferenceServer, _model, null).Wait();
         }
 
         public RelayCommand SaveCommand { get; }

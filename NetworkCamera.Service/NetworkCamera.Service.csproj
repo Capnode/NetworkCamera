@@ -13,4 +13,8 @@
     <PackageReference Include="tensorflow-serving-client" Version="2.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NetworkCamera.Core\NetworkCamera.Core.csproj" />
+  </ItemGroup>
+
 </Project>

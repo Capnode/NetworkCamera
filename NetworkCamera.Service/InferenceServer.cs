@@ -14,9 +14,17 @@
 
 using Google.Protobuf;
 using Grpc.Core;
+using NetworkCamera.Core;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Tensorflow;
 using Tensorflow.Serving;
 using static Tensorflow.Serving.PredictionService;
@@ -25,35 +33,45 @@ namespace NetworkCamera.Service
 {
     public class InferenceServer
     {
-        public unsafe void Startup(string inferenceServer, string certificate = default)
+        private static char[] _whitespace = new char[] { ' ', '\t' };
+
+        private PredictionServiceClient _client;
+        private Channel _channel;
+        private string _model;
+        private IDictionary<int, string> _labels;
+
+        public InferenceServer()
         {
-            if (string.IsNullOrEmpty(inferenceServer)) throw new ArgumentNullException(nameof(inferenceServer));
+        }
 
-            ChannelCredentials channelCredentials = 
+        public async Task Connect(string host, string model, string labels, string certificate = null)
+        {
+            if (string.IsNullOrEmpty(host)) throw new ArgumentNullException(nameof(host));
+            if (string.IsNullOrEmpty(host)) throw new ArgumentNullException(nameof(model));
+            if (string.IsNullOrEmpty(host)) throw new ArgumentNullException(nameof(labels));
+
+            _model = model;
+            _labels = ReadLabels(labels);
+
+            ChannelCredentials channelCredentials =
                 certificate == default ? ChannelCredentials.Insecure : new SslCredentials(certificate);
-            var channel = new Channel(inferenceServer, channelCredentials);
-            channel.ConnectAsync(DateTime.Now.AddSeconds(10).ToUniversalTime()).Wait();
-            var client = new PredictionServiceClient(channel);
+            _channel = new Channel(host, channelCredentials);
+            await _channel.ConnectAsync(DateTime.Now.AddSeconds(10).ToUniversalTime());
+            _client = new PredictionServiceClient(_channel);
+        }
 
-            // Set image
-            const string imageFile = @"TestData/grace_hopper_300x300.bmp";
-            const string model = @"testdata/ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite";
+        public async Task Disconnect()
+        {
+            await _channel.ShutdownAsync();
+        }
 
-            var bmp = new Bitmap(imageFile);
-            int channels = 3;
-            int width = bmp.Width;
-            int height = bmp.Height;
-            int size = channels * width * height;
-            BitmapData bmpData = bmp.LockBits(
-                new Rectangle(0, 0, width, height),
-                ImageLockMode.WriteOnly,
-                bmp.PixelFormat);
-
-            ReadOnlySpan<byte> byteSpan = new ReadOnlySpan<byte>(bmpData.Scan0.ToPointer(), size);
-            ByteString image = ByteString.CopyFrom(byteSpan);
-
-            //Unlock the pixels
-            bmp.UnlockBits(bmpData);
+        public async Task<IEnumerable<Detection>> Predict(Bitmap bmp)
+        {
+            // Desired image format
+            const int channels = 3;
+            const int width = 300;
+            const int height = 300;
+            const PixelFormat format = PixelFormat.Format24bppRgb;
 
             var shape = new TensorShapeProto
             {
@@ -70,20 +88,144 @@ namespace NetworkCamera.Service
             {
                 TensorShape = shape,
                 Dtype = DataType.DtUint8,
-                TensorContent = image
+                TensorContent = ToByteString(bmp, channels, width, height, format)
             };
 
             var request = new PredictRequest
             {
-                ModelSpec = new ModelSpec { Name = model }
+                ModelSpec = new ModelSpec { Name = _model }
             };
             request.Inputs.Add("data", proto);
-            PredictResponse response = client.Predict(request);
 
+            // Send requenst for inference
+            PredictResponse response = await _client.PredictAsync(request);
 
+            return ToDetections(response);
+        }
 
-            //var a = Tensorflow.TensorProto.
+        private static unsafe ByteString ToByteString(Bitmap source, int channels, int width, int height, PixelFormat format)
+        {
+            Bitmap bitmap = ResizeBitmap(source, width, height, format);
+            BitmapData bmpData = bitmap.LockBits(
+                new Rectangle(0, 0, width, height),
+                ImageLockMode.ReadOnly,
+                bitmap.PixelFormat);
 
+            int size = channels * width * height;
+            var byteSpan = new ReadOnlySpan<byte>(bmpData.Scan0.ToPointer(), size);
+            ByteString image = ByteString.CopyFrom(byteSpan);
+            bitmap.UnlockBits(bmpData);
+            return image;
+        }
+
+        public static Bitmap ResizeBitmap(Bitmap source, int width, int height, PixelFormat format)
+        {
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            // Do nothing if already in correct format
+            if (source.Width == width
+                && source.Height == height
+                && source.PixelFormat == format)
+            {
+                return source;
+            }
+
+            // Create the new bitmap.
+            // Note that Bitmap has a resize constructor, but you can't control the quality.
+            var bmp = new Bitmap(width, height, format);
+
+            using (var g = Graphics.FromImage(bmp))
+            {
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.DrawImage(source, new Rectangle(0, 0, width, height));
+                g.Save();
+            }
+
+            if (bmp.Width != width
+                || bmp.Height != height
+                || bmp.PixelFormat != format)
+            {
+                // Not possible to convert to desired format
+                throw new ArgumentOutOfRangeException(nameof(source));
+            }
+
+            return bmp;
+        }
+
+        private static IDictionary<int, string> ReadLabels(string labelFile)
+        {
+            string[] lines = File.ReadAllLines(labelFile);
+            var labels = new Dictionary<int, string>();
+            int linecount = 0;
+            foreach (string line in lines)
+            {
+                string[] columns = line.Split(_whitespace, StringSplitOptions.RemoveEmptyEntries);
+                if (columns.Length == 0)
+                {
+                    // Do nothing
+                }
+                else if (columns.Length > 1 && int.TryParse(columns[0], out int id))
+                {
+                    string label = string.Join(" ", columns.Skip(1));
+                    labels[id] = label;
+                }
+                else
+                {
+                    labels[linecount] = line;
+                }
+                linecount++;
+            }
+
+            return labels;
+        }
+
+        private unsafe IEnumerable<Detection> ToDetections(PredictResponse response)
+        {
+            ReadOnlySpan<byte> output0 = response.Outputs["output0"].TensorContent.Span;
+            ReadOnlySpan<float> boxes = MemoryMarshal.Cast<byte, float>(output0);
+            ReadOnlySpan<byte> output1 = response.Outputs["output1"].TensorContent.Span;
+            ReadOnlySpan<float> classes = MemoryMarshal.Cast<byte, float>(output1);
+            ReadOnlySpan<byte> output2 = response.Outputs["output2"].TensorContent.Span;
+            ReadOnlySpan<float> scores = MemoryMarshal.Cast<byte, float>(output2);
+            ReadOnlySpan<byte> output3 = response.Outputs["output3"].TensorContent.Span;
+            ReadOnlySpan<float> count = MemoryMarshal.Cast<byte, float>(output3);
+
+            var detections = new List<Detection>();
+            float size = count[0];
+            for (int i = 0; i < size; i++)
+            {
+                var detection = new Detection
+                {
+                    Label = ToLabel(classes[i]),
+                    Score = scores[i],
+                    Box = ToRectancle(
+                        left : boxes[4 * i],
+                        top : boxes[4 * i + 1],
+                        right : boxes[4 * i + 2],
+                        bottom : boxes[4 * i + 3])
+                };
+                detections.Add(detection);
+            }
+
+            return detections;
+        }
+
+        private string ToLabel(float id)
+        {
+            if (!_labels.TryGetValue((int)id, out string label))
+            {
+                label = id.ToString();
+            }
+
+            return label;
+        }
+
+        private static RectangleF ToRectancle(float left, float top, float right, float bottom)
+        {
+            Debug.Assert(left <= right);
+            Debug.Assert(top <= bottom);
+            return new RectangleF(left, top, right - left, bottom - top);
         }
     }
 }
