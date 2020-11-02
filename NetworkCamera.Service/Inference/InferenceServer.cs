@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -29,10 +30,13 @@ using Tensorflow;
 using Tensorflow.Serving;
 using static Tensorflow.Serving.PredictionService;
 
-namespace NetworkCamera.Service
+namespace NetworkCamera.Service.Inference
 {
     public class InferenceServer
     {
+        private const string _host = "172.25.75.141:9001";
+        public const string SsdMobilenetV2Labels = @"AppData/coco_labels.txt";
+        public const string SsdMobilenetV2Model = @"testdata/ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite";
         private static char[] _whitespace = new char[] { ' ', '\t' };
 
         private PredictionServiceClient _client;
@@ -42,13 +46,13 @@ namespace NetworkCamera.Service
 
         public InferenceServer()
         {
+//            Connect(_host, SsdMobilenetV2Model, null).Wait();
         }
 
         public async Task Connect(string host, string model, string labels, string certificate = null)
         {
             if (string.IsNullOrEmpty(host)) throw new ArgumentNullException(nameof(host));
-            if (string.IsNullOrEmpty(host)) throw new ArgumentNullException(nameof(model));
-            if (string.IsNullOrEmpty(host)) throw new ArgumentNullException(nameof(labels));
+            if (string.IsNullOrEmpty(model)) throw new ArgumentNullException(nameof(model));
 
             _model = model;
             _labels = ReadLabels(labels);
@@ -56,13 +60,14 @@ namespace NetworkCamera.Service
             ChannelCredentials channelCredentials =
                 certificate == default ? ChannelCredentials.Insecure : new SslCredentials(certificate);
             _channel = new Channel(host, channelCredentials);
-            await _channel.ConnectAsync(DateTime.Now.AddSeconds(10).ToUniversalTime());
+            DateTime deadline = DateTime.Now.AddSeconds(10).ToUniversalTime();
+            await _channel.ConnectAsync(deadline).ConfigureAwait(true);
             _client = new PredictionServiceClient(_channel);
         }
 
         public async Task Disconnect()
         {
-            await _channel.ShutdownAsync();
+            await _channel.ShutdownAsync().ConfigureAwait(true);
         }
 
         public async Task<IEnumerable<Detection>> Predict(Bitmap bmp)
@@ -105,7 +110,7 @@ namespace NetworkCamera.Service
 
         private static unsafe ByteString ToByteString(Bitmap source, int channels, int width, int height, PixelFormat format)
         {
-            Bitmap bitmap = ResizeBitmap(source, width, height, format);
+            using Bitmap bitmap = ResizeBitmap(source, width, height, format);
             BitmapData bmpData = bitmap.LockBits(
                 new Rectangle(0, 0, width, height),
                 ImageLockMode.ReadOnly,
@@ -121,7 +126,7 @@ namespace NetworkCamera.Service
         public static Bitmap ResizeBitmap(Bitmap source, int width, int height, PixelFormat format)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             // Do nothing if already in correct format
             if (source.Width == width
@@ -155,6 +160,8 @@ namespace NetworkCamera.Service
 
         private static IDictionary<int, string> ReadLabels(string labelFile)
         {
+            if (string.IsNullOrEmpty(labelFile)) return default;
+
             string[] lines = File.ReadAllLines(labelFile);
             var labels = new Dictionary<int, string>();
             int linecount = 0;
@@ -215,7 +222,7 @@ namespace NetworkCamera.Service
         {
             if (!_labels.TryGetValue((int)id, out string label))
             {
-                label = id.ToString();
+                label = id.ToString(CultureInfo.InvariantCulture);
             }
 
             return label;

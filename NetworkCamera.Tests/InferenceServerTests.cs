@@ -15,7 +15,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using NetworkCamera.Core;
-using NetworkCamera.Service;
+using NetworkCamera.Service.Inference;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -30,9 +30,8 @@ namespace NetworkCamera.Tests.Service
         private const string _host ="172.25.75.141:9001";
         private const string _imageFile = @"TestData/grace_hopper_300x300.bmp";
         private const string _largeImageFile = @"TestData/grace_hopper.bmp";
-        private const string _labelFile = @"TestData/coco_labels.txt";
-        private const string _modelName = 
-            @"testdata/ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite";
+        private const string _modelName = InferenceServer.SsdMobilenetV2Model;
+        private const string _labelFile = InferenceServer.SsdMobilenetV2Labels;
 
         private InferenceServer _dut;
 
@@ -49,21 +48,21 @@ namespace NetworkCamera.Tests.Service
 
         [TestMethod()]
         [ExpectedException(typeof(ArgumentNullException))]
-        public async Task Connect_with_empty_host()
+        public async Task ConnectWithEmptyHost()
         {
-            await _dut.Connect(string.Empty, _modelName, _labelFile);
+            await _dut.Connect(string.Empty, _modelName, _labelFile).ConfigureAwait(true);
         }
 
         [TestMethod()]
-        public async Task Predict_no_resize()
+        public async Task PredictNoResize()
         {
             // Arrange
-            var bmp = new Bitmap(_imageFile);
+            using var bmp = new Bitmap(_imageFile);
 
             // Act
-            await _dut.Connect(_host, _modelName, _labelFile);
-            IEnumerable<Detection> detections = await _dut.Predict(bmp);
-            await _dut.Disconnect();
+            await _dut.Connect(_host, _modelName, _labelFile).ConfigureAwait(true);
+            IEnumerable<Detection> detections = await _dut.Predict(bmp).ConfigureAwait(true);
+            await _dut.Disconnect().ConfigureAwait(true);
             Detection[] results = detections.ToArray();
             LogDetections(detections);
 
@@ -83,15 +82,15 @@ namespace NetworkCamera.Tests.Service
         }
 
         [TestMethod()]
-        public async Task Predict_resize()
+        public async Task PredictResize()
         {
             // Arrange
-            var bmp = new Bitmap(_largeImageFile);
+            using var bmp = new Bitmap(_largeImageFile);
 
             // Act
-            await _dut.Connect(_host, _modelName, _labelFile);
-            IEnumerable<Detection> detections = await _dut.Predict(bmp);
-            await _dut.Disconnect();
+            await _dut.Connect(_host, _modelName, _labelFile).ConfigureAwait(true);
+            IEnumerable<Detection> detections = await _dut.Predict(bmp).ConfigureAwait(true);
+            await _dut.Disconnect().ConfigureAwait(true);
             Detection[] results = detections.ToArray();
             LogDetections(detections);
 

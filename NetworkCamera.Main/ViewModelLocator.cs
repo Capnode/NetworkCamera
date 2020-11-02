@@ -29,7 +29,7 @@
 using GalaSoft.MvvmLight.Ioc;
 using NetworkCamera.Device;
 using NetworkCamera.Setting;
-using NetworkCamera.Service;
+using NetworkCamera.Service.Inference;
 
 namespace NetworkCamera.Main
 {

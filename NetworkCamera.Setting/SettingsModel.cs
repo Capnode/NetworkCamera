@@ -35,10 +35,24 @@ namespace NetworkCamera.Setting
 
         [Category("External")]
         [DisplayName("Inference server")]
-        [Description("Tensorflow lite gRPC Inference server (Experimental). Format <ip>:<port> ie: 192.168.1.100:8501")]
+        [Description("Tensorflow gRPC Inference server. Format <ip>:<port> ie: 192.168.1.100:8501")]
         [Browsable(true)]
         [ReadOnly(false)]
         public string InferenceServer { get; set; }
+
+        [Category("External")]
+        [DisplayName("Inference model")]
+        [Description("Tensorflow gRPC Inference model name.")]
+        [Browsable(true)]
+        [ReadOnly(false)]
+        public string InferenceModel { get; set; }
+
+        [Category("External")]
+        [DisplayName("Inference labels")]
+        [Description("Tensorflow gRPC Inference labels file.")]
+        [Browsable(true)]
+        [ReadOnly(false)]
+        public string InferenceLabels { get; set; }
 
         public void Copy(SettingsModel oldSettings)
         {
@@ -46,6 +60,8 @@ namespace NetworkCamera.Setting
 
             AppData = oldSettings.AppData;
             InferenceServer = oldSettings.InferenceServer;
+            InferenceModel = oldSettings.InferenceModel;
+            InferenceLabels = oldSettings.InferenceLabels;
         }
 
         public SettingsModel Clone()
@@ -53,7 +69,9 @@ namespace NetworkCamera.Setting
             return new SettingsModel
             {
                 AppData = AppData,
-                InferenceServer = InferenceServer
+                InferenceServer = InferenceServer,
+                InferenceModel = InferenceModel,
+                InferenceLabels = InferenceLabels
             };
         }
     }

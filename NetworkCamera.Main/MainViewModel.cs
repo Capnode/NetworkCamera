@@ -14,11 +14,12 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using NetworkCamera.Device;
-using NetworkCamera.Service;
+using NetworkCamera.Service.Inference;
 using NetworkCamera.Setting;
 
 namespace NetworkCamera.Main
@@ -27,12 +28,10 @@ namespace NetworkCamera.Main
     /// This class contains properties that the main View can data bind to.
     /// </summary>
     public class MainViewModel : ViewModelBase
-    {
-        private const string _labelFile = @"TestData/coco_labels";
-        private const string _model = @"testdata/ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite";
-        
+    {      
         private bool _isBusy;
         private string _statusMessage;
+        private readonly InferenceServer _inferenceServer;
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -47,6 +46,7 @@ namespace NetworkCamera.Main
             if (inferenceServer == null) throw new ArgumentNullException(nameof(inferenceServer));
             SettingsViewModel = settingsViewModel;
             DevicesViewModel = devicesViewModel;
+            _inferenceServer = inferenceServer;
 
             SaveCommand = new RelayCommand(() => SaveAll(), () => !IsBusy);
             Messenger.Default.Register<NotificationMessage>(this, OnStatusMessage);
@@ -54,8 +54,7 @@ namespace NetworkCamera.Main
             // Read configuration
             ReadConfigAsync();
 
-            // Start services
-            inferenceServer.Connect(settingsViewModel.Model.InferenceServer, _model, null).Wait();
+//            StartServicesAsync().Wait();
         }
 
         public RelayCommand SaveCommand { get; }
@@ -99,7 +98,7 @@ namespace NetworkCamera.Main
                 IsBusy = true;
                 string appData = AboutViewModel.GetAppDataFolder();
                 string program = AboutViewModel.GetProgramFolder();
-                CopyDirectory(Path.Combine(program, "Data"), appData, false);
+                CopyDirectory(Path.Combine(program, "AppData"), appData, false);
 
                 SettingsViewModel.Read(Path.Combine(appData, "Settings.json"));
                 DevicesViewModel.Read(Path.Combine(appData, "Devices.json"));
@@ -137,6 +136,13 @@ namespace NetworkCamera.Main
 
         private static void CopyDirectory(string sourceDir, string destDir, bool overwiteFiles)
         {
+            if (!Directory.Exists(sourceDir))
+            {
+                string message = $"Source directory {sourceDir} does not exist";
+                Messenger.Default.Send(new NotificationMessage(message));
+                return;
+            }
+
             // Create all of the directories
             foreach (string dirPath in Directory.GetDirectories(sourceDir, "*", SearchOption.AllDirectories))
                 Directory.CreateDirectory(dirPath.Replace(sourceDir, destDir, StringComparison.OrdinalIgnoreCase));
@@ -149,6 +155,24 @@ namespace NetworkCamera.Main
                 {
                     File.Copy(source, dest, true);
                 }
+            }
+        }
+
+        private async Task StartServicesAsync()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(SettingsViewModel.Model.InferenceServer)) return;
+                await _inferenceServer.Connect(
+                    SettingsViewModel.Model.InferenceServer,
+                    SettingsViewModel.Model.InferenceModel,
+                    SettingsViewModel.Model.InferenceLabels)
+                    .ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                string message = $"Error during startup: {ex.GetType()} - {ex.Message}";
+                Messenger.Default.Send(new NotificationMessage(message));
             }
         }
     }
