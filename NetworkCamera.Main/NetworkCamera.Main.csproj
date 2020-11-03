@@ -51,18 +51,10 @@
 
   <ItemGroup>
     <None Remove=".editorconfig" />
-    <None Remove="AppData\Devices.json" />
-    <None Remove="AppData\Settings.json" />
   </ItemGroup>
 
   <ItemGroup>
     <AdditionalFiles Include=".editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="AppData\Devices.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
