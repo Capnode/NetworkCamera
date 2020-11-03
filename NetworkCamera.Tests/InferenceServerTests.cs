@@ -72,13 +72,13 @@ namespace NetworkCamera.Tests.Service
             Detection result = results[0];
             Assert.AreEqual("person", result.Label);
             Assert.AreEqual(0.87890625, result.Score);
-            Assert.AreEqual("{X=0,004936278,Y=0,013600767,Width=0,98389876,Height=0,98389876}", result.Box.ToString());
+            Assert.AreEqual("{X=0,013600767,Y=0,004936278,Width=0,98389876,Height=0,98389876}", result.Box.ToString());
 
             result = results[1];
             Assert.AreEqual("tie", result.Label);
             Assert.AreEqual(0.5, result.Score);
             Logger.LogMessage("{0}", result.Box.ToString());
-            Assert.AreEqual("{X=0,7059594,Y=0,43098423,Width=0,20436776,Height=0,13439634}", result.Box.ToString());
+            Assert.AreEqual("{X=0,43098423,Y=0,7059594,Width=0,13439634,Height=0,20436776}", result.Box.ToString());
         }
 
         [TestMethod()]
@@ -100,13 +100,13 @@ namespace NetworkCamera.Tests.Service
             Detection result = results[0];
             Assert.AreEqual("person", result.Label);
             Assert.AreEqual(0.83984375, result.Score, 0.0001);
-            Assert.AreEqual("{X=0,027399272,Y=0,009679586,Width=0,95677316,Height=0,9744122}", result.Box.ToString());
+            Assert.AreEqual("{X=0,009679586,Y=0,027399272,Width=0,9744122,Height=0,95677316}", result.Box.ToString());
 
             result = results[1];
             Assert.AreEqual("tie", result.Label);
             Assert.AreEqual(0.5, result.Score, 0.0001);
             Logger.LogMessage("{0}", result.Box.ToString());
-            Assert.AreEqual("{X=0,7078091,Y=0,43220064,Width=0,20066833,Height=0,13196346}", result.Box.ToString());
+            Assert.AreEqual("{X=0,43220064,Y=0,7078091,Width=0,13196346,Height=0,20066833}", result.Box.ToString());
         }
 
         private void LogDetections(IEnumerable<Detection> detections)

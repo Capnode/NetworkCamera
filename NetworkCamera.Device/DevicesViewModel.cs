@@ -20,19 +20,22 @@ using System.IO;
 using NetworkCamera.Setting;
 using System.Collections.ObjectModel;
 using System;
+using NetworkCamera.Service.Inference;
 
 namespace NetworkCamera.Device
 {
     public class DevicesViewModel : ViewModelBase
     {
         private readonly SettingsModel _settings;
+        private readonly InferenceServer _inferenceServer;
         private ITreeViewModel _selectedItem;
         private bool _isBusy;
 
-        public DevicesViewModel(DevicesModel devices, SettingsModel settings)
+        public DevicesViewModel(DevicesModel devices, SettingsModel settings, InferenceServer inferenceServer)
         {
             Model = devices;
             _settings = settings;
+            _inferenceServer = inferenceServer;
 
             AddCommand = new RelayCommand(() => DoAddDevice(), () => !IsBusy);
             SelectedChangedCommand = new RelayCommand<ITreeViewModel>((vm) => DoSelectedChanged(vm), (vm) => vm != null);
@@ -102,7 +105,7 @@ namespace NetworkCamera.Device
 
         private void DoAddDevice()
         {
-            var loginViewModel = new DeviceViewModel(this, new DeviceModel(), _settings);
+            var loginViewModel = new DeviceViewModel(this, new DeviceModel(), _settings, _inferenceServer);
             Devices.Add(loginViewModel);
         }
 
@@ -121,7 +124,7 @@ namespace NetworkCamera.Device
             Devices.Clear();
             foreach (DeviceModel device in Model.Devices)
             {
-                var viewModel = new DeviceViewModel(this, device, _settings);
+                var viewModel = new DeviceViewModel(this, device, _settings, _inferenceServer);
                 Devices.Add(viewModel);
             }
         }

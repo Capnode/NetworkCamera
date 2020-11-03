@@ -29,7 +29,9 @@ namespace NetworkCamera.Main
     /// This class contains properties that the main View can data bind to.
     /// </summary>
     public class MainViewModel : ViewModelBase
-    {      
+    {
+        private const float _limit = 0.5f;
+
         private bool _isBusy;
         private string _statusMessage;
         private readonly InferenceServer _inferenceServer;
@@ -96,7 +98,7 @@ namespace NetworkCamera.Main
             ReadConfig();
 
             await StartServicesAsync().ConfigureAwait(true);
-            Messenger.Default.Send(new NotificationMessage("Startup complete"));
+            Messenger.Default.Send(new NotificationMessage("Ready"));
         }
 
         private void ReadConfig()
@@ -177,7 +179,8 @@ namespace NetworkCamera.Main
                 await _inferenceServer.Connect(
                     SettingsViewModel.Model.InferenceServer,
                     SettingsViewModel.Model.InferenceModel,
-                    SettingsViewModel.Model.InferenceLabels)
+                    SettingsViewModel.Model.InferenceLabels,
+                    _limit)
                     .ConfigureAwait(false);
             }
             catch (Exception ex)

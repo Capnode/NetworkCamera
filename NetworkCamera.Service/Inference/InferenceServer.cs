@@ -34,7 +34,6 @@ namespace NetworkCamera.Service.Inference
 {
     public class InferenceServer
     {
-        private const string _host = "172.25.75.141:9001";
         public const string SsdMobilenetV2Labels = @"AppData/coco_labels.txt";
         public const string SsdMobilenetV2Model = @"testdata/ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite";
         private static char[] _whitespace = new char[] { ' ', '\t' };
@@ -43,18 +42,20 @@ namespace NetworkCamera.Service.Inference
         private Channel _channel;
         private string _model;
         private IDictionary<int, string> _labels;
+        private float _limit;
 
         public InferenceServer()
         {
         }
 
-        public async Task Connect(string host, string model, string labels, string certificate = null)
+        public async Task Connect(string host, string model, string labels, float limit = 0, string certificate = null)
         {
             if (string.IsNullOrEmpty(host)) throw new ArgumentNullException(nameof(host));
             if (string.IsNullOrEmpty(model)) throw new ArgumentNullException(nameof(model));
 
             _model = model;
             _labels = ReadLabels(labels);
+            _limit = limit;
 
             ChannelCredentials channelCredentials =
                 certificate == default ? ChannelCredentials.Insecure : new SslCredentials(certificate);
@@ -201,15 +202,18 @@ namespace NetworkCamera.Service.Inference
             float size = count[0];
             for (int i = 0; i < size; i++)
             {
+                float score = scores[i];
+                if (score < _limit) continue;
+
                 var detection = new Detection
                 {
                     Label = ToLabel(classes[i]),
-                    Score = scores[i],
+                    Score = score,
                     Box = ToRectancle(
-                        left : boxes[4 * i],
-                        top : boxes[4 * i + 1],
-                        right : boxes[4 * i + 2],
-                        bottom : boxes[4 * i + 3])
+                        top : boxes[4 * i],
+                        left : boxes[4 * i + 1],
+                        bottom : boxes[4 * i + 2],
+                        right : boxes[4 * i + 3])
                 };
                 detections.Add(detection);
             }

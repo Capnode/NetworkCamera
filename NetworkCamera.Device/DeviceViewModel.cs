@@ -18,6 +18,7 @@ using GalaSoft.MvvmLight.Messaging;
 using NetworkCamera.Core;
 using NetworkCamera.Device.Internal;
 using NetworkCamera.Device.Properties;
+using NetworkCamera.Service.Inference;
 using NetworkCamera.Setting;
 using Serilog;
 using System;
@@ -37,17 +38,23 @@ namespace NetworkCamera.Device
         private readonly DevicesViewModel _parent;
         private CancellationTokenSource _cancel;
         private DeviceModel _model;
+        private readonly InferenceServer _inferenceServer;
         private DeviceFactory _factory;
         private bool _checkAll;
         private IList _selectedItems;
         private Bitmap _bitmap;
         private Filter _filter;
 
-        public DeviceViewModel(DevicesViewModel devicesViewModel, DeviceModel deviceModel, SettingsModel settings)
+        public DeviceViewModel(
+            DevicesViewModel devicesViewModel,
+            DeviceModel deviceModel,
+            SettingsModel settings,
+            InferenceServer inferenceServer)
         {
             _parent = devicesViewModel ?? throw new ArgumentNullException(nameof(devicesViewModel));
             Model = deviceModel ?? throw new ArgumentNullException(nameof(deviceModel));
             if (settings == null) throw new ArgumentNullException(nameof(devicesViewModel));
+            _inferenceServer = inferenceServer ?? throw new ArgumentNullException(nameof(inferenceServer));
 
             DeleteCommand = new RelayCommand(() => _parent?.DoDeleteDevice(this), () => !Active);
             ActiveCommand = new RelayCommand(() => DoActiveCommand(Model.Active));
@@ -166,7 +173,7 @@ namespace NetworkCamera.Device
             DataToModel();
             DeviceModel model = Model;
             _cancel = new CancellationTokenSource();
-            _filter = new Filter(model);
+            _filter = new Filter(model, _inferenceServer);
 
             while (!_cancel.Token.IsCancellationRequested && model.Active)
             {
@@ -270,7 +277,7 @@ namespace NetworkCamera.Device
             Rectangle crop = Crop;
             var rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
             crop.Intersect(rect);
-            if (crop.IsEmpty)
+            if (crop.Width == 0 || crop.Height == 0)
             {
                 crop = rect;
             }
@@ -278,7 +285,7 @@ namespace NetworkCamera.Device
             BitmapData bData = bitmap.LockBits(crop, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
             OpenCvSharp.Mat frame = new OpenCvSharp.Mat(crop.Height, crop.Width, OpenCvSharp.MatType.CV_8UC3, bData.Scan0, bData.Stride);
             Debug.Assert(_filter != null);
-            _filter.ProcessFrame(frame);
+            _filter.ProcessFrame(frame).Wait();
             frame.Dispose();
             bitmap.UnlockBits(bData);
             Bitmap = bitmap.Clone(rect, bitmap.PixelFormat);

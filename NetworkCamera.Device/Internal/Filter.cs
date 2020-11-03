@@ -12,8 +12,12 @@
  * limitations under the License.
  */
 
+using NetworkCamera.Core;
+using NetworkCamera.Service.Inference;
 using Newtonsoft.Json;
 using OpenCvSharp;
+using OpenCvSharp.Extensions;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -32,13 +36,15 @@ namespace NetworkCamera.Device.Internal
 
         private bool _disposed = false;
         private readonly DeviceModel _device;
+        private readonly InferenceServer _inferenceServer;
         private readonly BackgroundSubtractorMOG2 _segmentor;
         private int _index;
         private DateTime _postEventTime;
 
-        public Filter(DeviceModel device)
+        public Filter(DeviceModel device, InferenceServer inferenceServer)
         {
             _device = device;
+            _inferenceServer = inferenceServer;
             _segmentor = BackgroundSubtractorMOG2.Create(500, 16, true);
         }
 
@@ -48,7 +54,7 @@ namespace NetworkCamera.Device.Internal
             Dispose(false);
         }
 
-        internal void ProcessFrame(Mat frame)
+        internal async Task ProcessFrame(Mat frame)
         {
             IEnumerable<Rect> motion = Enumerable.Empty<Rect>();
             if (_device.MotionDetection)
@@ -57,9 +63,17 @@ namespace NetworkCamera.Device.Internal
                 if (!motion.Any()) return;
             }
 
-            if (!motion.Any()) return;
+            IEnumerable<Classification> classifications = Enumerable.Empty<Classification>();
+            if (_device.ObjectDetection)
+            {
+                classifications = await PredictFrameAsync(frame).ConfigureAwait(true);
+                if (!classifications.Any()) return;
+            }
+
+            if (!motion.Any() && !classifications.Any()) return;
 
             DrawMotion(frame, motion);
+            DrawClassification(frame, classifications);
 
             if (!string.IsNullOrEmpty(_device.Folder))
             {
@@ -70,7 +84,7 @@ namespace NetworkCamera.Device.Internal
                 && DateTime.Now - _postEventTime > TimeSpan.FromMinutes(_minPostMinutes))
             {
                 _postEventTime = DateTime.Now;
-                Task.Run(async () => await PostEvent().ConfigureAwait(false));
+                await PostEvent().ConfigureAwait(true);
             }
         }
 
@@ -91,6 +105,32 @@ namespace NetworkCamera.Device.Internal
             {
                 yield return Cv2.BoundingRect(contour);
             }
+        }
+
+        private async Task<IEnumerable<Classification>> PredictFrameAsync(Mat frame)
+        {
+            Mat crop = frame.Clone();
+            System.Drawing.Bitmap bitmap = crop.ToBitmap();
+            var results = await _inferenceServer.Predict(bitmap).ConfigureAwait(true);
+            var classifications = new List<Classification>();
+            foreach (var result in results)
+            {
+                int x0 = (int)(frame.Width * result.Box.X);
+                int y0 = (int)(frame.Height * result.Box.Y);
+                int width = (int)(frame.Width * result.Box.Width);
+                int height = (int)(frame.Height * result.Box.Height);
+//                Log.Verbose($"{result.Label} {result.Score:0.####} W:{width} H:{height}");
+
+                var classification = new Classification
+                {
+                    Label = result.Label,
+                    Score = result.Score,
+                    Rectangle = new Rect(x0, y0, width, height),
+                };
+               classifications.Add(classification);
+            }
+
+            return classifications;
         }
 
         private static void DrawMotion(Mat frame, IEnumerable<Rect> motions)
