@@ -296,9 +296,13 @@ namespace NetworkCamera.Device
             OpenCvSharp.Mat frame = new OpenCvSharp.Mat(crop.Height, crop.Width, OpenCvSharp.MatType.CV_8UC3, bData.Scan0, bData.Stride);
             Debug.Assert(_filter != null);
             _filter.ProcessFrame(frame).Wait();
-            TimeSpan processingTime = DateTime.Now - entryTime;
-            string message = $"Frame {(int)elapsed.TotalMilliseconds} ms\nFilter {(int)processingTime.Milliseconds} ms";
-            Filter.DrawText(frame, 10, 0, message);
+            if (Model.OnscreenInfo)
+            {
+                TimeSpan processingTime = DateTime.Now - entryTime;
+                string message = $"Frame {(int)elapsed.TotalMilliseconds} ms\nFilter {(int)processingTime.Milliseconds} ms";
+                Filter.DrawText(frame, 10, 0, message);
+            }
+
             frame.Dispose();
             bitmap.UnlockBits(bData);
             Bitmap = bitmap.Clone(rect, bitmap.PixelFormat);

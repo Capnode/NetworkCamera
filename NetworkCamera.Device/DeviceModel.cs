@@ -60,6 +60,13 @@ namespace NetworkCamera.Device
         public string Source { get; set; } = string.Empty;
 
         [Category("Device")]
+        [DisplayName("Onscreen info")]
+        [Description("Show onscreen information.")]
+        [Browsable(true)]
+        [ReadOnly(false)]
+        public bool OnscreenInfo { get; set; }
+
+        [Category("Device")]
         [DisplayName("Motion detection")]
         [Description("Activate motion detection")]
         [Browsable(true)]
