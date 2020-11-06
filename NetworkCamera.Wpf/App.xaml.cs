@@ -33,7 +33,7 @@ namespace NetworkCamera.Wpf
     /// </summary>
     public partial class App : Application
     {
-        private const long _maxLlogFileSize = 100000;
+        private const long _maxLogFileSize = 100000;
         private const uint _esContinous = 0x80000000;
         private const uint _esSystemRequired = 0x00000001;
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "<Pending>")]
@@ -59,7 +59,7 @@ namespace NetworkCamera.Wpf
                 .WriteTo.File(
                     Path.Combine(appData, AboutModel.AssemblyProduct + ".log"),
                     rollingInterval: RollingInterval.Infinite,
-                    fileSizeLimitBytes: _maxLlogFileSize)
+                    fileSizeLimitBytes: _maxLogFileSize)
                 .CreateLogger();
 
             Log.Information($"Startup \"{AboutModel.AssemblyProduct}\"");

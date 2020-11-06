@@ -32,6 +32,7 @@ namespace NetworkCamera.Device.Internal
 {
     internal class Filter : IDisposable
     {
+        private const int _stdHeight = 500;
         private const double _minPostMinutes = 10;
 
         private bool _disposed = false;
@@ -85,6 +86,21 @@ namespace NetworkCamera.Device.Internal
             {
                 _postEventTime = DateTime.Now;
                 await PostEvent().ConfigureAwait(true);
+            }
+        }
+
+        internal static void DrawText(Mat frame, int x, int y, string text)
+        {
+            HersheyFonts fontFace = HersheyFonts.HersheySimplex;
+            double fontScale = (double)frame.Height / _stdHeight;
+            int thickness = frame.Height / _stdHeight + 1;
+            Size size = Cv2.GetTextSize(nameof(DrawText), fontFace, fontScale, thickness, out int baseline);
+            string[] lines = text.Split('\n');
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string line = lines[i];
+                var cursor = new Point(x, y + (i + 1) * (size.Height + baseline));
+                Cv2.PutText(frame, line, cursor, fontFace, fontScale, Scalar.Red, thickness, LineTypes.AntiAlias);
             }
         }
 
@@ -144,30 +160,29 @@ namespace NetworkCamera.Device.Internal
 
         private static void DrawClassification(Mat frame, IEnumerable<Classification> classifications)
         {
-            Scalar color = new Scalar(0, 0, 255);
+            const int fill = -1;
+            int thickness = frame.Height / _stdHeight + 1;
+            int margin = 2 * thickness;
             foreach (Classification classification in classifications)
             {
-                var rect = classification.Rectangle;
-                Cv2.Rectangle(frame, rect, color, 2);
-                DrawTextInBoxAbove(frame, rect, classification.Label);
-            }
-        }
+                // Draw rectangle around object
+                Rect rect = classification.Rectangle;
+                Cv2.Rectangle(frame, rect, Scalar.Red, thickness);
 
-        private static void DrawTextInBoxAbove(Mat frame, Rect rect, string label)
-        {
-            Scalar fontColor = Scalar.All(0);
-            Scalar borderColor = new Scalar(0, 0, 255);
-            HersheyFonts fontFace = HersheyFonts.HersheySimplex;
-            double fontScale = 1;
-            int thickness = 2;
-            Size size = Cv2.GetTextSize(label, fontFace, fontScale, thickness, out int baseline);
-            baseline += thickness;
-            Cv2.Rectangle(
-                frame,
-                new Rect(rect.Left, rect.Top - size.Height - baseline , size.Width + thickness, size.Height + baseline),
-                borderColor,
-                thickness);
-            Cv2.PutText(frame, label, new Point(rect.Left, rect.Top - baseline), fontFace, fontScale, fontColor, thickness, LineTypes.AntiAlias);
+                // Draw text in box above
+                HersheyFonts fontFace = HersheyFonts.HersheySimplex;
+                double fontScale = (double)frame.Height / _stdHeight;
+                Size size = Cv2.GetTextSize(classification.Label, fontFace, fontScale, thickness, out int baseline);
+                var textbox = new Rect(
+                    rect.Left,
+                    rect.Top - size.Height - baseline - 2 * margin,
+                    size.Width + 2 * margin,
+                    size.Height + baseline + 2 * margin);
+                Cv2.Rectangle(frame, textbox, Scalar.White, fill);
+                Cv2.Rectangle(frame, textbox, Scalar.Red, thickness);
+                var cursor = new Point(rect.Left + margin, rect.Top - baseline);
+                Cv2.PutText(frame, classification.Label, cursor, fontFace, fontScale, Scalar.Black, thickness, LineTypes.AntiAlias);
+            }
         }
 
         private void SaveImage(Mat frame)

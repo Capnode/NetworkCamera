@@ -44,6 +44,7 @@ namespace NetworkCamera.Device
         private IList _selectedItems;
         private Bitmap _bitmap;
         private Filter _filter;
+        private DateTime _timestamp;
 
         public DeviceViewModel(
             DevicesViewModel devicesViewModel,
@@ -160,7 +161,7 @@ namespace NetworkCamera.Device
             }
             catch (Exception ex)
             {
-                string message = $"Error running device: {Model.Name}";
+                string message = $"Device {Model.Name}: {ex.Message} ({ex.GetType()})";
                 Log.Error(ex, message);
                 Messenger.Default.Send(new NotificationMessage(message));
                 Model.Active = false;
@@ -267,6 +268,10 @@ namespace NetworkCamera.Device
 
         private void DeviceEvent(IDevice sender, DeviceEventArgs e)
         {
+            DateTime entryTime = DateTime.Now;
+            TimeSpan elapsed = _timestamp == default ? TimeSpan.Zero : entryTime - _timestamp;
+            _timestamp = entryTime;
+
             Bitmap bitmap = e.Bitmap;
             if (bitmap == null)
             {
@@ -286,6 +291,9 @@ namespace NetworkCamera.Device
             OpenCvSharp.Mat frame = new OpenCvSharp.Mat(crop.Height, crop.Width, OpenCvSharp.MatType.CV_8UC3, bData.Scan0, bData.Stride);
             Debug.Assert(_filter != null);
             _filter.ProcessFrame(frame).Wait();
+            TimeSpan processingTime = DateTime.Now - entryTime;
+            string message = $"Frame {(int)elapsed.TotalMilliseconds} ms\nFilter {(int)processingTime.Milliseconds} ms";
+            Filter.DrawText(frame, 10, 0, message);
             frame.Dispose();
             bitmap.UnlockBits(bData);
             Bitmap = bitmap.Clone(rect, bitmap.PixelFormat);

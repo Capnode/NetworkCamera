@@ -88,17 +88,33 @@ namespace NetworkCamera.Main
         private void OnStatusMessage(NotificationMessage message)
         {
             StatusMessage = message.Notification;
-            if (string.IsNullOrWhiteSpace(message.Notification))
-                return;
+            if (string.IsNullOrWhiteSpace(message.Notification)) return;
         }
 
         private async Task StartupAsync()
         {
-            // Read configuration
-            ReadConfig();
+            try
+            {
+                // Read configuration
+                ReadConfig();
 
-            await StartServicesAsync().ConfigureAwait(true);
-            Messenger.Default.Send(new NotificationMessage("Ready"));
+                // Start services
+                if (string.IsNullOrEmpty(SettingsViewModel.Model.InferenceServer)) return;
+                await _inferenceServer.Connect(
+                    SettingsViewModel.Model.InferenceServer,
+                    SettingsViewModel.Model.InferenceModel,
+                    SettingsViewModel.Model.InferenceLabels,
+                    _limit)
+                    .ConfigureAwait(false);
+
+                Messenger.Default.Send(new NotificationMessage("Ready"));
+            }
+            catch (Exception ex)
+            {
+                string message = $"{ex.Message} ({ex.GetType()})";
+                Messenger.Default.Send(new NotificationMessage(message));
+                Log.Error(ex, message);
+            }
         }
 
         private void ReadConfig()
@@ -113,12 +129,6 @@ namespace NetworkCamera.Main
                 SettingsViewModel.Read(Path.Combine(appData, "Settings.json"));
                 DevicesViewModel.Read(Path.Combine(appData, "Devices.json"));
                 Messenger.Default.Send(new NotificationMessage(string.Empty));
-            }
-            catch (Exception ex)
-            {
-                string message = $"{ex.GetType()}: {ex.Message}";
-                Messenger.Default.Send(new NotificationMessage(message));
-                Log.Error(ex, message);
             }
             finally
             {
@@ -168,26 +178,6 @@ namespace NetworkCamera.Main
                 {
                     File.Copy(source, dest, true);
                 }
-            }
-        }
-
-        private async Task StartServicesAsync()
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(SettingsViewModel.Model.InferenceServer)) return;
-                await _inferenceServer.Connect(
-                    SettingsViewModel.Model.InferenceServer,
-                    SettingsViewModel.Model.InferenceModel,
-                    SettingsViewModel.Model.InferenceLabels,
-                    _limit)
-                    .ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                string message = $"Error during startup: {ex.GetType()} - {ex.Message}";
-                Messenger.Default.Send(new NotificationMessage(message));
-                Log.Error(ex, message);
             }
         }
     }

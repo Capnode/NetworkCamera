@@ -72,6 +72,8 @@ namespace NetworkCamera.Service.Inference
 
         public async Task<IEnumerable<Detection>> Predict(Bitmap bmp)
         {
+            if (_client == null) return Enumerable.Empty<Detection>();
+
             // Desired image format
             const int channels = 3;
             const int width = 300;

@@ -21,6 +21,7 @@ using NetworkCamera.Setting;
 using System.Collections.ObjectModel;
 using System;
 using NetworkCamera.Service.Inference;
+using System.Linq;
 
 namespace NetworkCamera.Device
 {
@@ -74,9 +75,9 @@ namespace NetworkCamera.Device
             return Devices.Remove(device);
         }
 
-        public bool Read(string fileName)
+        public void Read(string fileName)
         {
-            if (!File.Exists(fileName)) return false;
+            if (!File.Exists(fileName)) return;
             using (StreamReader r = new StreamReader(fileName))
             {
                 string json = r.ReadToEnd();
@@ -84,17 +85,18 @@ namespace NetworkCamera.Device
             }
 
             DataFromModel();
-            return true;
         }
 
-        public bool Save(string fileName)
+        public void Save(string fileName)
         {
             DataToModel();
+
+            // Do not overwrite if file read error
+            if (!Model.Devices.Any()) return;
 
             using StreamWriter file = File.CreateText(fileName);
             JsonSerializer serializer = new JsonSerializer { Formatting = Formatting.Indented };
             serializer.Serialize(file, Model);
-            return true;
         }
 
         private void DoSelectedChanged(ITreeViewModel vm)
