@@ -50,7 +50,7 @@ namespace NetworkCamera.Tests.Service
         [ExpectedException(typeof(ArgumentNullException))]
         public async Task ConnectWithEmptyHost()
         {
-            await _dut.Connect(string.Empty, _modelName, _labelFile).ConfigureAwait(true);
+            await _dut.Connect(string.Empty, _modelName, _labelFile).ConfigureAwait(false);
         }
 
         [TestMethod()]
@@ -60,9 +60,9 @@ namespace NetworkCamera.Tests.Service
             using var bmp = new Bitmap(_imageFile);
 
             // Act
-            await _dut.Connect(_host, _modelName, _labelFile).ConfigureAwait(true);
-            IEnumerable<Detection> detections = await _dut.Predict(bmp).ConfigureAwait(true);
-            await _dut.Disconnect().ConfigureAwait(true);
+            await _dut.Connect(_host, _modelName, _labelFile).ConfigureAwait(false);
+            IEnumerable<Detection> detections = await _dut.Predict(bmp).ConfigureAwait(false);
+            await _dut.Disconnect().ConfigureAwait(false);
             Detection[] results = detections.ToArray();
             LogDetections(detections);
 
@@ -88,9 +88,9 @@ namespace NetworkCamera.Tests.Service
             using var bmp = new Bitmap(_largeImageFile);
 
             // Act
-            await _dut.Connect(_host, _modelName, _labelFile).ConfigureAwait(true);
-            IEnumerable<Detection> detections = await _dut.Predict(bmp).ConfigureAwait(true);
-            await _dut.Disconnect().ConfigureAwait(true);
+            await _dut.Connect(_host, _modelName, _labelFile).ConfigureAwait(false);
+            IEnumerable<Detection> detections = await _dut.Predict(bmp).ConfigureAwait(false);
+            await _dut.Disconnect().ConfigureAwait(false);
             Detection[] results = detections.ToArray();
             LogDetections(detections);
 

@@ -29,6 +29,7 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace NetworkCamera.Device
 {
@@ -102,9 +103,13 @@ namespace NetworkCamera.Device
                 Model.Active = value;
                 RaisePropertyChanged(() => Active);
 
-                StartCommand.RaiseCanExecuteChanged();
-                StopCommand.RaiseCanExecuteChanged();
-                DeleteCommand.RaiseCanExecuteChanged();
+                // Run in UI thread
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    StartCommand.RaiseCanExecuteChanged();
+                    StopCommand.RaiseCanExecuteChanged();
+                    DeleteCommand.RaiseCanExecuteChanged();
+                });
             }
         }
 
@@ -156,7 +161,7 @@ namespace NetworkCamera.Device
         {
             try
             {
-                await RunModel().ConfigureAwait(true);
+                await RunModel().ConfigureAwait(false);
                 Messenger.Default.Send(new NotificationMessage(string.Empty));
             }
             catch (Exception ex)
@@ -183,7 +188,7 @@ namespace NetworkCamera.Device
                 _cancel = new CancellationTokenSource();
                 await Task.Run(() => model = _factory
                     .Run(model, DeviceEvent, _cancel.Token), _cancel.Token)
-                    .ConfigureAwait(true);
+                    .ConfigureAwait(false);
                 _factory = null;
 
                 // Update view
@@ -210,7 +215,7 @@ namespace NetworkCamera.Device
         {
             if (value)
             {
-                StartTaskAsync().ConfigureAwait(true);
+                StartTaskAsync().ConfigureAwait(false);
             }
             else
             {
@@ -224,7 +229,7 @@ namespace NetworkCamera.Device
             {
                 _parent.IsBusy = true;
                 Active = true;
-                StartTaskAsync().ConfigureAwait(true);
+                StartTaskAsync().ConfigureAwait(false);
             }
             finally
             {

@@ -61,13 +61,13 @@ namespace NetworkCamera.Service.Inference
                 certificate == default ? ChannelCredentials.Insecure : new SslCredentials(certificate);
             _channel = new Channel(host, channelCredentials);
             DateTime deadline = DateTime.Now.AddSeconds(10).ToUniversalTime();
-            await _channel.ConnectAsync(deadline).ConfigureAwait(true);
+            await _channel.ConnectAsync(deadline).ConfigureAwait(false);
             _client = new PredictionServiceClient(_channel);
         }
 
         public async Task Disconnect()
         {
-            await _channel.ShutdownAsync().ConfigureAwait(true);
+            await _channel.ShutdownAsync().ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<Detection>> Predict(Bitmap bmp)

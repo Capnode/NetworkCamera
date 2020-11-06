@@ -67,7 +67,7 @@ namespace NetworkCamera.Device.Internal
             IEnumerable<Classification> classifications = Enumerable.Empty<Classification>();
             if (_device.ObjectDetection)
             {
-                classifications = await PredictFrameAsync(frame).ConfigureAwait(true);
+                classifications = await PredictFrameAsync(frame).ConfigureAwait(false);
                 if (!classifications.Any()) return;
             }
 
@@ -85,7 +85,7 @@ namespace NetworkCamera.Device.Internal
                 && DateTime.Now - _postEventTime > TimeSpan.FromMinutes(_minPostMinutes))
             {
                 _postEventTime = DateTime.Now;
-                await PostEvent().ConfigureAwait(true);
+                await PostEvent().ConfigureAwait(false);
             }
         }
 
@@ -127,7 +127,7 @@ namespace NetworkCamera.Device.Internal
         {
             Mat crop = frame.Clone();
             System.Drawing.Bitmap bitmap = crop.ToBitmap();
-            var results = await _inferenceServer.Predict(bitmap).ConfigureAwait(true);
+            var results = await _inferenceServer.Predict(bitmap).ConfigureAwait(false);
             var classifications = new List<Classification>();
             foreach (var result in results)
             {
@@ -218,7 +218,7 @@ namespace NetworkCamera.Device.Internal
             string json = JsonConvert.SerializeObject(param);
             var uri = new Uri(_device.Notification);
             using StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-            HttpResponseMessage result = await client.PostAsync(uri, content).ConfigureAwait(true);
+            HttpResponseMessage result = await client.PostAsync(uri, content).ConfigureAwait(false);
         }
 
         protected virtual void Dispose(bool disposing)
