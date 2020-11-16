@@ -164,6 +164,18 @@ namespace NetworkCamera.Device
                 await RunModel().ConfigureAwait(false);
                 Messenger.Default.Send(new NotificationMessage(string.Empty));
             }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.InnerExceptions)
+                {
+                    Log.Error(ex, $"Device {Model.Name}: {ex.Message} ({ex.GetType()})");
+                }
+
+                string message = $"Device {Model.Name}: {aex.GetType()} See log for details";
+                Messenger.Default.Send(new NotificationMessage(message));
+                Model.Active = false;
+                DataFromModel();
+            }
             catch (Exception ex)
             {
                 string message = $"Device {Model.Name}: {ex.Message} ({ex.GetType()})";
