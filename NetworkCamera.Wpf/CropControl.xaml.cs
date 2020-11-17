@@ -97,6 +97,7 @@ namespace NetworkCamera.Wpf
             if (sender is FrameworkElement visual)
             {
                 AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(visual);
+                if (adornerLayer == null) return;
                 CroppingAdorner = new CroppingAdorner(visual);
                 adornerLayer.Add(CroppingAdorner);
                 AdornerCrop(Crop);

@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 namespace NetworkCamera.Tests.Service
 {
     [TestClass()]
-    public class InferenceServerTests
+    public class InferenceServerTests : IDisposable
     {
         private const string _host ="172.25.75.141:9001";
         private const string _imageFile = @"TestData/grace_hopper_300x300.bmp";
@@ -42,15 +42,27 @@ namespace NetworkCamera.Tests.Service
         }
 
         [TestCleanup]
-        public void Cleanup()
+        public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // Dispose managed resources.
+                _dut.Dispose();
+            }
+            // Free native resources.
         }
 
         [TestMethod()]
         [ExpectedException(typeof(ArgumentNullException))]
-        public async Task ConnectWithEmptyHost()
+        public void ConnectWithEmptyHost()
         {
-            await _dut.Connect(string.Empty, _modelName, _labelFile).ConfigureAwait(false);
+            _dut.Start(string.Empty, _modelName, _labelFile);
         }
 
         [TestMethod()]
@@ -60,7 +72,7 @@ namespace NetworkCamera.Tests.Service
             using var bmp = new Bitmap(_imageFile);
 
             // Act
-            await _dut.Connect(_host, _modelName, _labelFile).ConfigureAwait(false);
+            _dut.Start(_host, _modelName, _labelFile);
             IEnumerable<Detection> detections = await _dut.Predict(bmp).ConfigureAwait(false);
             await _dut.Disconnect().ConfigureAwait(false);
             Detection[] results = detections.ToArray();
@@ -88,7 +100,7 @@ namespace NetworkCamera.Tests.Service
             using var bmp = new Bitmap(_largeImageFile);
 
             // Act
-            await _dut.Connect(_host, _modelName, _labelFile).ConfigureAwait(false);
+            _dut.Start(_host, _modelName, _labelFile);
             IEnumerable<Detection> detections = await _dut.Predict(bmp).ConfigureAwait(false);
             await _dut.Disconnect().ConfigureAwait(false);
             Detection[] results = detections.ToArray();
@@ -116,6 +128,5 @@ namespace NetworkCamera.Tests.Service
                 Logger.LogMessage("{0} {1} {2}", item.Label, item.Score, item.Box);
             }
         }
-
     }
 }

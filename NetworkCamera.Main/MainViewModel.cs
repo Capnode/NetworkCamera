@@ -13,6 +13,7 @@
  */
 
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
@@ -30,8 +31,6 @@ namespace NetworkCamera.Main
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        private const float _limit = 0.5f;
-
         private bool _isBusy;
         private string _statusMessage;
         private readonly InferenceServer _inferenceServer;
@@ -54,6 +53,7 @@ namespace NetworkCamera.Main
 
             SaveCommand = new RelayCommand(() => SaveAll(), () => !IsBusy);
             Messenger.Default.Register<NotificationMessage>(this, OnStatusMessage);
+            Messenger.Default.Register<DeviceMessage>(this, OnDeviceMessage);
 
             _startupTask = StartupAsync();
         }
@@ -61,6 +61,8 @@ namespace NetworkCamera.Main
         public RelayCommand SaveCommand { get; }
         public SettingsViewModel SettingsViewModel { get; }
         public DevicesViewModel DevicesViewModel { get; }
+
+        public ObservableCollection<DeviceViewModel> OnlineCameras { get; } = new ObservableCollection<DeviceViewModel>();
 
         public static string Title => AboutModel.AssemblyProduct;
 
@@ -88,7 +90,19 @@ namespace NetworkCamera.Main
         private void OnStatusMessage(NotificationMessage message)
         {
             StatusMessage = message.Notification;
-            if (string.IsNullOrWhiteSpace(message.Notification)) return;
+        }
+
+        private void OnDeviceMessage(DeviceMessage message)
+        {
+            // Add active cameras
+            OnlineCameras.Clear();
+            foreach (DeviceViewModel device in DevicesViewModel.Devices)
+            {
+                if (device.Active)
+                {
+                    OnlineCameras.Add(device);
+                }
+            }
         }
 
         private async Task StartupAsync()
@@ -96,17 +110,7 @@ namespace NetworkCamera.Main
             try
             {
                 // Read configuration
-                ReadConfig();
-
-                // Start services
-                if (string.IsNullOrEmpty(SettingsViewModel.Model.InferenceServer)) return;
-                await _inferenceServer.Connect(
-                    SettingsViewModel.Model.InferenceServer,
-                    SettingsViewModel.Model.InferenceModel,
-                    SettingsViewModel.Model.InferenceLabels,
-                    _limit)
-                    .ConfigureAwait(false);
-
+                await ReadConfig().ConfigureAwait(false);
                 Messenger.Default.Send(new NotificationMessage("Ready"));
             }
             catch (Exception ex)
@@ -117,7 +121,7 @@ namespace NetworkCamera.Main
             }
         }
 
-        private void ReadConfig()
+        private async Task ReadConfig()
         {
             try
             {
@@ -127,8 +131,8 @@ namespace NetworkCamera.Main
                 CopyDirectory(Path.Combine(program, "AppData"), appData, false);
 
                 SettingsViewModel.Read(Path.Combine(appData, "Settings.json"));
+                await StartServices().ConfigureAwait(false);
                 DevicesViewModel.Read(Path.Combine(appData, "Devices.json"));
-                Messenger.Default.Send(new NotificationMessage(string.Empty));
             }
             finally
             {
@@ -151,9 +155,23 @@ namespace NetworkCamera.Main
             }
             finally
             {
-                Messenger.Default.Send(new NotificationMessage(string.Empty));
                 IsBusy = false;
             }
+        }
+
+        private async Task StartServices()
+        {
+            // Start services
+            if (!string.IsNullOrEmpty(SettingsViewModel.Model.InferenceServer))
+            {
+                _inferenceServer.Start(
+                    SettingsViewModel.Model.InferenceServer,
+                    SettingsViewModel.Model.InferenceModel,
+                    SettingsViewModel.Model.InferenceLabels,
+                    SettingsModel.InferenceLimit);
+            }
+
+            await Task.CompletedTask.ConfigureAwait(false);
         }
 
         private static void CopyDirectory(string sourceDir, string destDir, bool overwiteFiles)

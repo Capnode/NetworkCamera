@@ -109,6 +109,9 @@ namespace NetworkCamera.Device
                     StartCommand.RaiseCanExecuteChanged();
                     StopCommand.RaiseCanExecuteChanged();
                     DeleteCommand.RaiseCanExecuteChanged();
+
+                    // Notify MainView about changed device
+                    Messenger.Default.Send(new DeviceMessage());
                 });
             }
         }
@@ -166,12 +169,18 @@ namespace NetworkCamera.Device
             }
             catch (AggregateException aex)
             {
+                string message = string.Empty;
                 foreach (var ex in aex.InnerExceptions)
                 {
-                    Log.Error(ex, $"Device {Model.Name}: {ex.Message} ({ex.GetType()})");
+                    message = $"Device {Model.Name}: {ex.Message} ({ex.GetType()})";
+                    Log.Error(ex, message);
                 }
 
-                string message = $"Device {Model.Name}: {aex.GetType()} See log for details";
+                if (aex.InnerExceptions.Count > 1)
+                {
+                    message = $"Device {Model.Name}: {aex.GetType()} See log for details";
+                }
+
                 Messenger.Default.Send(new NotificationMessage(message));
                 Model.Active = false;
                 DataFromModel();

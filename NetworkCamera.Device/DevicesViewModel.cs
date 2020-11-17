@@ -22,6 +22,7 @@ using System.Collections.ObjectModel;
 using System;
 using NetworkCamera.Service.Inference;
 using System.Linq;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace NetworkCamera.Device
 {
@@ -129,6 +130,9 @@ namespace NetworkCamera.Device
                 var viewModel = new DeviceViewModel(this, device, _settings, _inferenceServer);
                 Devices.Add(viewModel);
             }
+
+            // Notify MainView about added devices
+            Messenger.Default.Send(new DeviceMessage());
         }
     }
 }

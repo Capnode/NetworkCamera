@@ -63,6 +63,28 @@
         <TabControl
             HorizontalAlignment="Stretch"
             DockPanel.Dock="Top">
+            <TabItem
+                Header="{Binding OnlineCameras.Count, Converter={internal:StringFormatConverter}, ConverterParameter=Overview ({0}), FallbackValue=Overview}"
+				IsSelected="{Binding OverviewTabSelected, Mode=TwoWay}">
+                <ListBox Name="overviewListBox"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					SelectedItem="{Binding OverviewSelectedCamera}"
+					ItemsSource="{Binding OnlineCameras}">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <Image Source="{Binding Bitmap, Converter={internal:ImageConverter}}" Width="320"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </TabItem>
+
             <TabItem Header="{Binding DevicesViewModel.Devices.Count, Converter={internal:StringFormatConverter}, ConverterParameter=Devices ({0}), FallbackValue=Devices}">
                 <local:DevicesView />
             </TabItem>

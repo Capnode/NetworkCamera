@@ -19,6 +19,8 @@ namespace NetworkCamera.Setting
 {
     public class SettingsModel
     {
+        public static float InferenceLimit => 0.5f;
+
         [Category("Program")]
         [DisplayName("ApplicationData")]
         [Description("ApplicationData folder.")]

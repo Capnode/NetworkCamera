@@ -25,6 +25,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Tensorflow;
 using Tensorflow.Serving;
@@ -32,47 +33,63 @@ using static Tensorflow.Serving.PredictionService;
 
 namespace NetworkCamera.Service.Inference
 {
-    public class InferenceServer
+    public class InferenceServer : IDisposable
     {
         public const string SsdMobilenetV2Labels = @"AppData/coco_labels.txt";
         public const string SsdMobilenetV2Model = @"testdata/ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite";
         private static char[] _whitespace = new char[] { ' ', '\t' };
 
-        private PredictionServiceClient _client;
+        private volatile PredictionServiceClient _client;
         private Channel _channel;
+        private string _host;
         private string _model;
         private IDictionary<int, string> _labels;
         private float _limit;
+        private string _certificate;
+        private Mutex _mutex = new Mutex();
 
         public InferenceServer()
         {
         }
 
-        public async Task Connect(string host, string model, string labels, float limit = 0, string certificate = null)
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // Dispose managed resources.
+                _mutex.Dispose();
+            }
+            // Free native resources.
+        }
+
+        public void Start(string host, string model, string labels, float limit = 0, string certificate = null)
         {
             if (string.IsNullOrEmpty(host)) throw new ArgumentNullException(nameof(host));
             if (string.IsNullOrEmpty(model)) throw new ArgumentNullException(nameof(model));
 
+            _host = host;
             _model = model;
             _labels = ReadLabels(labels);
             _limit = limit;
-
-            ChannelCredentials channelCredentials =
-                certificate == default ? ChannelCredentials.Insecure : new SslCredentials(certificate);
-            _channel = new Channel(host, channelCredentials);
-            DateTime deadline = DateTime.Now.AddSeconds(10).ToUniversalTime();
-            await _channel.ConnectAsync(deadline).ConfigureAwait(false);
-            _client = new PredictionServiceClient(_channel);
+            _certificate = certificate;
         }
 
         public async Task Disconnect()
         {
             await _channel.ShutdownAsync().ConfigureAwait(false);
+            _client = null;
         }
 
         public async Task<IEnumerable<Detection>> Predict(Bitmap bmp)
         {
-            if (_client == null) return Enumerable.Empty<Detection>();
+            // Make sure connected
+            await CheckConnect().ConfigureAwait(false);
 
             // Desired image format
             const int channels = 3;
@@ -108,6 +125,23 @@ namespace NetworkCamera.Service.Inference
             PredictResponse response = await _client.PredictAsync(request);
 
             return ToDetections(response);
+        }
+
+        private async Task CheckConnect()
+        {
+            if (_client != null) return;
+            if (_mutex.WaitOne())
+            {
+                // Check again
+                if (_client != null) return;
+            }
+
+            ChannelCredentials channelCredentials =
+                _certificate == default ? ChannelCredentials.Insecure : new SslCredentials(_certificate);
+            _channel = new Channel(_host, channelCredentials);
+            DateTime deadline = DateTime.Now.AddSeconds(10).ToUniversalTime();
+            await _channel.ConnectAsync(deadline).ConfigureAwait(false);
+            _client = new PredictionServiceClient(_channel);
         }
 
         private static unsafe ByteString ToByteString(Bitmap source, int channels, int width, int height, PixelFormat format)
