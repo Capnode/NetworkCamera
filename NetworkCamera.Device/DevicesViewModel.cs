@@ -30,7 +30,6 @@ namespace NetworkCamera.Device
     {
         private readonly SettingsModel _settings;
         private readonly InferenceServer _inferenceServer;
-        private ITreeViewModel _selectedItem;
         private bool _isBusy;
 
         public DevicesViewModel(DevicesModel devices, SettingsModel settings, InferenceServer inferenceServer)
@@ -40,12 +39,9 @@ namespace NetworkCamera.Device
             _inferenceServer = inferenceServer;
 
             AddCommand = new RelayCommand(() => DoAddDevice(), () => !IsBusy);
-            SelectedChangedCommand = new RelayCommand<ITreeViewModel>((vm) => DoSelectedChanged(vm), (vm) => vm != null);
-
             DataFromModel();
         }
 
-        public RelayCommand<ITreeViewModel> SelectedChangedCommand { get; }
         public RelayCommand AddCommand { get; }
 
         public DevicesModel Model { get; }
@@ -60,19 +56,9 @@ namespace NetworkCamera.Device
             set => Set(ref _isBusy, value);
         }
 
-        public ITreeViewModel SelectedItem
-        {
-            get => _selectedItem;
-            set
-            {
-                Set(ref _selectedItem, value);
-            }
-        }
-
         internal bool DoDeleteDevice(DeviceViewModel device)
         {
             if (device == null) throw new ArgumentNullException(nameof(device));
-            SelectedItem = null;
             return Devices.Remove(device);
         }
 
@@ -98,12 +84,6 @@ namespace NetworkCamera.Device
             using StreamWriter file = File.CreateText(fileName);
             JsonSerializer serializer = new JsonSerializer { Formatting = Formatting.Indented };
             serializer.Serialize(file, Model);
-        }
-
-        private void DoSelectedChanged(ITreeViewModel vm)
-        {
-            vm.Refresh();
-            SelectedItem = vm;
         }
 
         private void DoAddDevice()

@@ -49,17 +49,18 @@
                 <Button ToolTip="Add device" Command="{Binding AddCommand}">
                     <Image Source="/Resources/Add.png" Width="16" Height="16"/>
                 </Button>
-                <Button ToolTip="Delete" Command="{Binding SelectedItem.DeleteCommand}">
+                <Button ToolTip="Delete" Command="{Binding ElementName=treeview, Path=SelectedItem.DeleteCommand}">
                     <Image Source="/Resources/Delete.png" Width="16" Height="16"/>
                 </Button>
-                <Button ToolTip="Start device" Command="{Binding SelectedItem.StartCommand}">
+                <Button ToolTip="Start device" Command="{Binding ElementName=treeview, Path=SelectedItem.StartCommand}">
                     <Image Source="/Resources/Run.png" Width="16" Height="16"/>
                 </Button>
-                <Button ToolTip="Stop device" Command="{Binding SelectedItem.StopCommand}">
+                <Button ToolTip="Stop device" Command="{Binding ElementName=treeview, Path=SelectedItem.StopCommand}">
                     <Image Source="/Resources/Stop.png" Width="16" Height="16"/>
                 </Button>
             </ToolBar>
             <TreeView
+                Name="treeview"
                 ItemsSource="{Binding Devices}"
                 BorderThickness="0">
                 <TreeView.ContextMenu>
@@ -73,13 +74,6 @@
                         </MenuItem>
                     </ContextMenu>
                 </TreeView.ContextMenu>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectedItemChanged">
-                        <i:InvokeCommandAction
-                            Command="{Binding SelectedChangedCommand}"
-                            CommandParameter="{Binding Path=SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type TreeView}}}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
                 <TreeView.Resources>
                     <Style TargetType="{x:Type TreeViewItem}">
                         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
@@ -115,7 +109,7 @@
         <ContentControl
             Grid.Column="1"
             Margin="7,0,0,0"
-            Content="{Binding Path=SelectedItem}">
+            Content="{Binding ElementName=treeview, Path=SelectedItem}">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type vm:DeviceViewModel}">
                     <TabControl>
