@@ -35,7 +35,7 @@ namespace NetworkCamera.Device.Core
         private const int _stdHeight = 500;
         private const double _minPostMinutes = 10;
 
-        private bool _disposed = false;
+        private bool _disposed;
         private readonly DeviceModel _device;
         private readonly InferenceServer _inferenceServer;
         private readonly BackgroundSubtractorMOG2 _segmentor;

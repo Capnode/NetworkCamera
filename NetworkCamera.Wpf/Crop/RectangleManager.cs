@@ -43,8 +43,8 @@ namespace NetworkCamera.Wpf.Crop
         private bool _isDrawing;
         private bool _isDragging;
 
-        private Point _topLeft = new Point();
-        private Point _bottomRight = new Point();
+        private Point _topLeft;
+        private Point _bottomRight;
 
         private Point _mouseStartPoint;
         private Point _mouseLastPoint;

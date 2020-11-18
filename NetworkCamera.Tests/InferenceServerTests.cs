@@ -121,7 +121,7 @@ namespace NetworkCamera.Tests.Service
             Assert.AreEqual("{X=0,43220064,Y=0,7078091,Width=0,13196346,Height=0,20066833}", result.Box.ToString());
         }
 
-        private void LogDetections(IEnumerable<Detection> detections)
+        private static void LogDetections(IEnumerable<Detection> detections)
         {
             foreach (Detection item in detections)
             {

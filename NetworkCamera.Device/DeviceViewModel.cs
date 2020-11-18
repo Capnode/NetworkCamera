@@ -35,7 +35,7 @@ namespace NetworkCamera.Device
 {
     public class DeviceViewModel : ViewModelBase, ITreeViewModel, IDisposable
     {
-        private bool _isDisposed = false; // To detect redundant calls
+        private bool _isDisposed; // To detect redundant calls
         private readonly DevicesViewModel _parent;
         private CancellationTokenSource _cancel;
         private DeviceModel _model;

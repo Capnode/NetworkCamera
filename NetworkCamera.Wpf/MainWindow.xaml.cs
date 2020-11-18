@@ -80,7 +80,7 @@ namespace NetworkCamera.Wpf
             OpenUrl("https://github.com/Capnode/NetworkCamera/wiki/Privacy-policy");
         }
 
-        private void OpenUrl(string url)
+        private static void OpenUrl(string url)
         {
             try
             {

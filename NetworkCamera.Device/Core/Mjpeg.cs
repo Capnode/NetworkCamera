@@ -30,7 +30,7 @@ namespace NetworkCamera.Device.Core
 
     internal class Mjpeg : IDevice
     {
-        private object _userData = null;
+        private object _userData;
         private bool _useSeparateConnectionGroup = true;
 
         private const int _bufSize = 512 * 1024; // buffer size
@@ -113,7 +113,7 @@ namespace NetworkCamera.Device.Core
 
                 // check content type
                 string ct = resp.ContentType;
-                if (ct.IndexOf("multipart/x-mixed-replace", StringComparison.InvariantCultureIgnoreCase) == -1)
+                if (!ct.Contains("multipart/x-mixed-replace"))
                 {
                     throw new ApplicationException($"Invalid content type: {ct}");
                 }
