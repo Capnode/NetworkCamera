@@ -42,10 +42,10 @@ namespace NetworkCamera.Device
         private readonly InferenceServer _inferenceServer;
         private DeviceFactory _factory;
         private bool _checkAll;
-        private IList _selectedItems;
         private Bitmap _bitmap;
         private Filter _filter;
         private DateTime _timestamp;
+        private bool _isSelected;
 
         public DeviceViewModel(
             DevicesViewModel devicesViewModel,
@@ -78,21 +78,10 @@ namespace NetworkCamera.Device
         public RelayCommand StartCommand { get; }
         public RelayCommand StopCommand { get; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "<Pending>")]
-        public IList SelectedItems
+        public bool IsSelected
         {
-            get { return _selectedItems; }
-            set
-            {
-                _selectedItems = value;
-                string message = string.Empty;
-                if (_selectedItems?.Count > 0)
-                {
-                    message = string.Format(CultureInfo.InvariantCulture, Resources.SelectedCount, _selectedItems.Count);
-                }
-
-                Messenger.Default.Send(new NotificationMessage(message));
-            }
+            get => _isSelected;
+            set => Set(ref _isSelected, value);
         }
 
         public bool Active

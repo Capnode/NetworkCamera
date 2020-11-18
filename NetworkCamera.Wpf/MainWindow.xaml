@@ -68,8 +68,12 @@
 				IsSelected="{Binding OverviewTabSelected, Mode=TwoWay}">
                 <ListBox Name="overviewListBox"
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-					SelectedItem="{Binding OverviewSelectedCamera}"
 					ItemsSource="{Binding OnlineCameras}">
+                    <ListBox.Resources>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                        </Style>
+                    </ListBox.Resources>
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel Orientation="Horizontal"/>
@@ -77,15 +81,21 @@
                     </ListBox.ItemsPanel>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel>
-                                <Image Source="{Binding Bitmap, Converter={internal:ImageConverter}}" Width="320"/>
-                            </StackPanel>
+                            <Image Source="{Binding Bitmap, Converter={internal:ImageConverter}}" Width="320">
+                                <Image.InputBindings>
+                                    <MouseBinding
+                                        MouseAction="LeftDoubleClick"
+                                        Command="{Binding DataContext.ShowDeviceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
+                                </Image.InputBindings>
+                            </Image>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
             </TabItem>
 
-            <TabItem Header="{Binding DevicesViewModel.Devices.Count, Converter={internal:StringFormatConverter}, ConverterParameter=Devices ({0}), FallbackValue=Devices}">
+            <TabItem
+                Header="{Binding DevicesViewModel.Devices.Count, Converter={internal:StringFormatConverter}, ConverterParameter=Devices ({0}), FallbackValue=Devices}"
+                IsSelected="{Binding DevicesTabSelected, Mode=TwoWay}">
                 <local:DevicesView />
             </TabItem>
             <!--TabItem Header="{Binding FoldersViewModel.Folders.Count, Converter={internal:StringFormatConverter}, ConverterParameter=Folders ({0}), FallbackValue=Folders}">

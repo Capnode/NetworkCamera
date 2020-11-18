@@ -33,6 +33,8 @@ namespace NetworkCamera.Main
     {
         private bool _isBusy;
         private string _statusMessage;
+        private bool _overviewTabSelected;
+        private bool _devicesTabSelected;
         private readonly InferenceServer _inferenceServer;
         private readonly Task _startupTask;
 
@@ -52,6 +54,7 @@ namespace NetworkCamera.Main
             _inferenceServer = inferenceServer;
 
             SaveCommand = new RelayCommand(() => SaveAll(), () => !IsBusy);
+            ShowDeviceCommand = new RelayCommand(() => OnShowDevice(), () => !IsBusy);
             Messenger.Default.Register<NotificationMessage>(this, OnStatusMessage);
             Messenger.Default.Register<DeviceMessage>(this, OnDeviceMessage);
 
@@ -59,6 +62,7 @@ namespace NetworkCamera.Main
         }
 
         public RelayCommand SaveCommand { get; }
+        public RelayCommand ShowDeviceCommand { get; }
         public SettingsViewModel SettingsViewModel { get; }
         public DevicesViewModel DevicesViewModel { get; }
 
@@ -79,6 +83,18 @@ namespace NetworkCamera.Main
         {
             get => _statusMessage;
             set => Set(ref _statusMessage, value);
+        }
+
+        public bool OverviewTabSelected
+        {
+            get => _overviewTabSelected;
+            set => Set(ref _overviewTabSelected, value);
+        }
+
+        public bool DevicesTabSelected
+        {
+            get => _devicesTabSelected;
+            set => Set(ref _devicesTabSelected, value);
         }
 
         public void SaveAll()
@@ -103,6 +119,11 @@ namespace NetworkCamera.Main
                     OnlineCameras.Add(device);
                 }
             }
+        }
+
+        private void OnShowDevice()
+        {
+            DevicesTabSelected = true;
         }
 
         private async Task StartupAsync()

@@ -81,6 +81,9 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <TreeView.Resources>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                    </Style>
                     <DataTemplate DataType="{x:Type vm:DeviceViewModel}" >
                         <StackPanel Orientation="Horizontal">
                             <CheckBox
