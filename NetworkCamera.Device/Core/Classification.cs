@@ -16,7 +16,7 @@ using OpenCvSharp;
 
 namespace NetworkCamera.Device.Core
 {
-    public class Classification
+    internal class Classification
     {
         /// <summary>
         /// The bounding rectangle

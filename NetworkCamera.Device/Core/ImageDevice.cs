@@ -18,7 +18,7 @@ using System.Threading;
 
 namespace NetworkCamera.Device.Core
 {
-    class ImageDevice : IDevice
+    internal class ImageDevice : IDevice
     {
         public void Main(DeviceModel device, DeviceEventHandler deviceEvent, CancellationToken token)
         {

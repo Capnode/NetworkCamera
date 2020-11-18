@@ -37,7 +37,7 @@ namespace NetworkCamera.Service.Inference
     {
         public const string SsdMobilenetV2Labels = @"AppData/coco_labels.txt";
         public const string SsdMobilenetV2Model = @"testdata/ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite";
-        private static char[] _whitespace = new char[] { ' ', '\t' };
+        private static readonly char[] _whitespace = new char[] { ' ', '\t' };
 
         private volatile PredictionServiceClient _client;
         private Channel _channel;
@@ -46,7 +46,7 @@ namespace NetworkCamera.Service.Inference
         private IDictionary<int, string> _labels;
         private float _limit;
         private string _certificate;
-        private Mutex _mutex = new Mutex();
+        private readonly Mutex _mutex = new Mutex();
 
         public InferenceServer()
         {
