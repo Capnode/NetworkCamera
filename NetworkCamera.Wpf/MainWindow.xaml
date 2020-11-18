@@ -66,33 +66,8 @@
             <TabItem
                 Header="{Binding OnlineCameras.Count, Converter={core:StringFormatConverter}, ConverterParameter=Overview ({0}), FallbackValue=Overview}"
 				IsSelected="{Binding OverviewTabSelected, Mode=TwoWay}">
-                <ListBox Name="overviewListBox"
-					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-					ItemsSource="{Binding OnlineCameras}">
-                    <ListBox.Resources>
-                        <Style TargetType="{x:Type ListBoxItem}">
-                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                        </Style>
-                    </ListBox.Resources>
-                    <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Image Source="{Binding Bitmap, Converter={core:ImageConverter}}" Width="320">
-                                <Image.InputBindings>
-                                    <MouseBinding
-                                        MouseAction="LeftDoubleClick"
-                                        Command="{Binding DataContext.ShowDeviceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
-                                </Image.InputBindings>
-                            </Image>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                <local:Overview />
             </TabItem>
-
             <TabItem
                 Header="{Binding DevicesViewModel.Devices.Count, Converter={core:StringFormatConverter}, ConverterParameter=Devices ({0}), FallbackValue=Devices}"
                 IsSelected="{Binding DevicesTabSelected, Mode=TwoWay}">
