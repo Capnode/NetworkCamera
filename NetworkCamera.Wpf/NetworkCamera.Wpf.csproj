@@ -56,7 +56,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove=".editorconfig" />
     <None Remove="Resources\Add.png" />
     <None Remove="Resources\AddList.png" />
     <None Remove="Resources\AddText.png" />
@@ -82,10 +81,6 @@
     <None Remove="Resources\Stop.png" />
     <None Remove="Resources\Tools.png" />
     <None Remove="Resources\Up.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Include=".editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
