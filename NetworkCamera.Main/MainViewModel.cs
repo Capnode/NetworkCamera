@@ -152,7 +152,7 @@ namespace NetworkCamera.Main
                 CopyDirectory(Path.Combine(program, "AppData"), appData, false);
 
                 SettingsViewModel.Read(Path.Combine(appData, "Settings.json"));
-                await StartServices().ConfigureAwait(false);
+                await StartServices().ConfigureAwait(true);
                 DevicesViewModel.Read(Path.Combine(appData, "Devices.json"));
             }
             finally
@@ -185,11 +185,12 @@ namespace NetworkCamera.Main
             // Start services
             if (!string.IsNullOrEmpty(SettingsViewModel.Model.InferenceServer))
             {
-                _inferenceServer.Start(
+                await _inferenceServer.Start(
                     SettingsViewModel.Model.InferenceServer,
                     SettingsViewModel.Model.InferenceModel,
                     SettingsViewModel.Model.InferenceLabels,
-                    SettingsModel.InferenceLimit);
+                    SettingsModel.InferenceLimit)
+                    .ConfigureAwait(false);
             }
 
             await Task.CompletedTask.ConfigureAwait(false);
