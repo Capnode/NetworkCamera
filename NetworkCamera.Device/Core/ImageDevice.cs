@@ -16,7 +16,7 @@ using System;
 using System.Drawing;
 using System.Threading;
 
-namespace NetworkCamera.Device.Internal
+namespace NetworkCamera.Device.Core
 {
     class ImageDevice : IDevice
     {

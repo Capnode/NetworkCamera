@@ -17,7 +17,7 @@ using System;
 using System.Linq;
 using System.Threading;
 
-namespace NetworkCamera.Device.Internal
+namespace NetworkCamera.Device.Core
 {
     internal class DeviceFactory
     {

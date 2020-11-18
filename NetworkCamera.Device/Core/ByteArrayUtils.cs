@@ -15,7 +15,7 @@
 // Copyright © Andrew Kirillov, 2005-2006
 // andrew.kirillov@gmail.com
 
-namespace NetworkCamera.Device.Internal
+namespace NetworkCamera.Device.Core
 {
 	using System;
 

@@ -16,7 +16,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using NetworkCamera.Core;
-using NetworkCamera.Device.Internal;
+using NetworkCamera.Device.Core;
 using NetworkCamera.Device.Properties;
 using NetworkCamera.Service.Inference;
 using NetworkCamera.Setting;

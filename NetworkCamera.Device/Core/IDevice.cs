@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2020 Capnode AB
+ * Copyright 2018 Capnode AB
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License.
@@ -12,25 +12,12 @@
  * limitations under the License.
  */
 
-using OpenCvSharp;
+using System.Threading;
 
-namespace NetworkCamera.Device.Internal
+namespace NetworkCamera.Device.Core
 {
-    public class Classification
+    internal interface IDevice
     {
-        /// <summary>
-        /// The bounding rectangle
-        /// </summary>
-        public Rect Rectangle { get; set; }
-
-        /// <summary>
-        /// The object label
-        /// </summary>
-        public string Label { get; set; }
-
-        /// <summary>
-        /// The score of the matching
-        /// </summary>
-        public double Score { get; set; }
+        void Main(DeviceModel device, DeviceEventHandler deviceEvent, CancellationToken token);
     }
 }

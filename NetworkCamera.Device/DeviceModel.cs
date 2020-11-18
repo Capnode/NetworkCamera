@@ -13,7 +13,7 @@
  */
 
 using NetworkCamera.Core;
-using NetworkCamera.Device.Internal;
+using NetworkCamera.Device.Core;
 using System.ComponentModel;
 using System.Drawing;
 

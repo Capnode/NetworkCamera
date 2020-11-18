@@ -1,5 +1,5 @@
-﻿/*
- * Copyright 2018 Capnode AB
+/*
+ * Copyright 2019 Capnode AB
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License.
@@ -12,12 +12,20 @@
  * limitations under the License.
  */
 
-using System.Threading;
-
-namespace NetworkCamera.Device.Internal
+namespace NetworkCamera.Device.Core
 {
-    internal interface IDevice
+    using System;
+    using System.Drawing;
+
+    internal delegate void DeviceEventHandler(IDevice sender, DeviceEventArgs e);
+
+    internal class DeviceEventArgs : EventArgs
     {
-        void Main(DeviceModel device, DeviceEventHandler deviceEvent, CancellationToken token);
+        public DeviceEventArgs(Bitmap bitmap)
+        {
+            Bitmap = bitmap;
+        }
+
+        public Bitmap Bitmap { get; }
     }
 }

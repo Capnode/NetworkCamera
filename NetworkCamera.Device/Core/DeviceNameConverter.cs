@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-namespace NetworkCamera.Device.Internal
+namespace NetworkCamera.Device.Core
 {
     internal class DeviceNameConverter : TypeConverter
     {
