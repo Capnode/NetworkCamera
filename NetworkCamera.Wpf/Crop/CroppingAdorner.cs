@@ -22,7 +22,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace NetworkCamera.Wpf.Internal
+namespace NetworkCamera.Wpf.Crop
 {
     /// <summary>
     /// Class that response for cropping images

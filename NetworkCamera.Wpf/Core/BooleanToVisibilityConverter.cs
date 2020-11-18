@@ -17,7 +17,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace NetworkCamera.Wpf.Internal
+namespace NetworkCamera.Wpf.Core
 {
     internal class BooleanToVisibilityConverter : BaseConverter, IValueConverter
     {

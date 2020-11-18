@@ -14,6 +14,7 @@
 
 using NetworkCamera.Main;
 using NetworkCamera.Setting;
+using NetworkCamera.Wpf.Core;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;

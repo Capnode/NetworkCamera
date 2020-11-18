@@ -17,9 +17,9 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace NetworkCamera.Wpf.Internal
+namespace NetworkCamera.Wpf.Core
 {
-    internal partial class FolderEditor : UserControl
+    public partial class FolderEditor : UserControl
     {
         public FolderEditor()
         {

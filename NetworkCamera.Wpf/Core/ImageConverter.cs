@@ -19,7 +19,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
-namespace NetworkCamera.Wpf.Internal
+namespace NetworkCamera.Wpf.Core
 {
     /// <summary>
     /// One-way converter from System.Drawing.Bitmap to System.Windows.Media.ImageSource

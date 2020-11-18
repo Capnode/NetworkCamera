@@ -3,8 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:internal="clr-namespace:NetworkCamera.Wpf.Internal"
     xmlns:local="clr-namespace:NetworkCamera.Wpf"
+    xmlns:core="clr-namespace:NetworkCamera.Wpf.Core"
     mc:Ignorable="d"
     DataContext="{Binding Source={StaticResource Locator}, Path=MainViewModel}"
     Closing="Window_Closing"
@@ -64,7 +64,7 @@
             HorizontalAlignment="Stretch"
             DockPanel.Dock="Top">
             <TabItem
-                Header="{Binding OnlineCameras.Count, Converter={internal:StringFormatConverter}, ConverterParameter=Overview ({0}), FallbackValue=Overview}"
+                Header="{Binding OnlineCameras.Count, Converter={core:StringFormatConverter}, ConverterParameter=Overview ({0}), FallbackValue=Overview}"
 				IsSelected="{Binding OverviewTabSelected, Mode=TwoWay}">
                 <ListBox Name="overviewListBox"
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -81,7 +81,7 @@
                     </ListBox.ItemsPanel>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Image Source="{Binding Bitmap, Converter={internal:ImageConverter}}" Width="320">
+                            <Image Source="{Binding Bitmap, Converter={core:ImageConverter}}" Width="320">
                                 <Image.InputBindings>
                                     <MouseBinding
                                         MouseAction="LeftDoubleClick"
@@ -94,14 +94,14 @@
             </TabItem>
 
             <TabItem
-                Header="{Binding DevicesViewModel.Devices.Count, Converter={internal:StringFormatConverter}, ConverterParameter=Devices ({0}), FallbackValue=Devices}"
+                Header="{Binding DevicesViewModel.Devices.Count, Converter={core:StringFormatConverter}, ConverterParameter=Devices ({0}), FallbackValue=Devices}"
                 IsSelected="{Binding DevicesTabSelected, Mode=TwoWay}">
                 <local:DevicesView />
             </TabItem>
-            <!--TabItem Header="{Binding FoldersViewModel.Folders.Count, Converter={internal:StringFormatConverter}, ConverterParameter=Folders ({0}), FallbackValue=Folders}">
+            <!--TabItem Header="{Binding FoldersViewModel.Folders.Count, Converter={core:StringFormatConverter}, ConverterParameter=Folders ({0}), FallbackValue=Folders}">
                 <view:FoldersView />
             </>
-            <TabItem Header="{Binding FiltersViewModel.Filters.Count, Converter={internal:StringFormatConverter}, ConverterParameter=Filters ({0}), FallbackValue=Filters}">
+            <TabItem Header="{Binding FiltersViewModel.Filters.Count, Converter={core:StringFormatConverter}, ConverterParameter=Filters ({0}), FallbackValue=Filters}">
                 <view:FiltersView />
             </TabItem-->
         </TabControl>

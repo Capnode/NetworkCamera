@@ -12,7 +12,7 @@
  * limitations under the License.
  */
  
-using NetworkCamera.Wpf.Internal;
+using NetworkCamera.Wpf.Crop;
 using System;
 using System.Drawing;
 using System.Windows;

@@ -18,7 +18,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace NetworkCamera.Wpf.Internal
+namespace NetworkCamera.Wpf.Crop
 {
     internal class ThumbFactory
     {

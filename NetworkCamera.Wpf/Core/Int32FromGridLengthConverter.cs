@@ -17,7 +17,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace NetworkCamera.Wpf.Internal
+namespace NetworkCamera.Wpf.Core
 {
     [ValueConversion(typeof(int), typeof(GridLength))]
     internal class Int32FromGridLengthConverter : BaseConverter, IValueConverter

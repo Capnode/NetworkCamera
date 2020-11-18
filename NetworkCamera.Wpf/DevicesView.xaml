@@ -5,8 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-    xmlns:internal="clr-namespace:NetworkCamera.Wpf.Internal"
     xmlns:local="clr-namespace:NetworkCamera.Wpf"
+    xmlns:core="clr-namespace:NetworkCamera.Wpf.Core"
     xmlns:properties="clr-namespace:NetworkCamera.Wpf.Properties"
     xmlns:vm="clr-namespace:NetworkCamera.Device;assembly=NetworkCamera.Device"
     DataContext="{Binding Source={StaticResource Locator}, Path=DevicesViewModel}" 
@@ -15,10 +15,10 @@
 
     <UserControl.Resources>
         <DataTemplate x:Key="FilenameEditor">
-            <internal:FilenameEditor Filename="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <core:FilenameEditor Filename="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </DataTemplate>
         <DataTemplate x:Key="FolderEditor">
-            <internal:FolderEditor Folder="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <core:FolderEditor Folder="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </DataTemplate>
 
         <ObjectDataProvider
@@ -27,12 +27,12 @@
     </UserControl.Resources>
 
     <UserControl.Cursor>
-        <Binding Path="IsBusy" Converter="{internal:BusyMouseConverter}"/>
+        <Binding Path="IsBusy" Converter="{core:BusyMouseConverter}"/>
     </UserControl.Cursor>
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="{Binding Source={StaticResource settings}, Path=DevicesViewSplitter, Mode=TwoWay, Converter={internal:Int32FromGridLengthConverter}}"/>
+            <ColumnDefinition Width="{Binding Source={StaticResource settings}, Path=DevicesViewSplitter, Mode=TwoWay, Converter={core:Int32FromGridLengthConverter}}"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <GridSplitter
@@ -121,7 +121,7 @@
                     <TabControl>
                         <TabItem Header="View">
                             <local:CropControl
-                                Source="{Binding Bitmap, Converter={internal:ImageConverter}}"
+                                Source="{Binding Bitmap, Converter={core:ImageConverter}}"
                                 Crop="{Binding Crop, Mode=TwoWay}" />
                         </TabItem>
                         <TabItem Header="Settings">

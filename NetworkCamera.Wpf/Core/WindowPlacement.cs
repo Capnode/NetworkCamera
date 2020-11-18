@@ -21,7 +21,7 @@ using System.Windows.Interop;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace NetworkCamera.Wpf
+namespace NetworkCamera.Wpf.Core
 {
     // RECT structure required by WINDOWPLACEMENT structure
     [Serializable]

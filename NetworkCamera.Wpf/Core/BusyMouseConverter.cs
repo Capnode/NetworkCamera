@@ -16,7 +16,7 @@ using System;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace NetworkCamera.Wpf.Internal
+namespace NetworkCamera.Wpf.Core
 {
     /// <summary>
     /// Sets the cursor state of the mouse.
@@ -40,9 +40,9 @@ namespace NetworkCamera.Wpf.Internal
             object parameter,
             System.Globalization.CultureInfo culture)
         {
-            if (value is bool)
+            if (value is bool boolean)
             {
-                if ((bool)value)
+                if (boolean)
                 {
                     return Cursors.Wait;
                 }

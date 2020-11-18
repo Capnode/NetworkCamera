@@ -18,7 +18,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace NetworkCamera.Wpf.Internal
+namespace NetworkCamera.Wpf.Crop
 {
     /// <summary>
     /// Display text information
@@ -32,9 +32,7 @@ namespace NetworkCamera.Wpf.Internal
             _rectangleManager = rectangleManager;
             _sizeTextBlock = new TextBlock()
             {
-#pragma warning disable CA1303 // Do not pass literals as localized parameters
                 Text = "Size counter",
-#pragma warning restore CA1303 // Do not pass literals as localized parameters
                 FontSize = 14,
                 Foreground = Brushes.White,
                 Background = Brushes.Black,

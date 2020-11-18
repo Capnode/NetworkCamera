@@ -18,9 +18,9 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace NetworkCamera.Wpf.Internal
+namespace NetworkCamera.Wpf.Core
 {
-    internal partial class FilenameEditor : UserControl
+    public partial class FilenameEditor : UserControl
     {
         public FilenameEditor()
         {

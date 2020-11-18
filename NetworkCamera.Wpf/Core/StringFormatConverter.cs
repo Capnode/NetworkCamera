@@ -15,7 +15,7 @@
 using System;
 using System.Windows.Data;
 
-namespace NetworkCamera.Wpf.Internal
+namespace NetworkCamera.Wpf.Core
 {
     [ValueConversion(typeof(object), typeof(string))]
     internal class StringFormatConverter : BaseConverter, IValueConverter

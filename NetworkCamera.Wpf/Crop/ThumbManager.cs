@@ -20,7 +20,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
-namespace NetworkCamera.Wpf.Internal
+namespace NetworkCamera.Wpf.Crop
 {
     /// <summary>
     /// Class that represent for displaying/redraw thumbs
