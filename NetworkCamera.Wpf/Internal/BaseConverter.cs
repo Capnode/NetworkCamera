@@ -17,7 +17,7 @@ using System.Windows.Markup;
 
 namespace NetworkCamera.Wpf.Internal
 {
-    internal abstract class BaseConverter : MarkupExtension
+    public abstract class BaseConverter : MarkupExtension
     {
         public override object ProvideValue(IServiceProvider serviceProvider)
         {

@@ -25,7 +25,7 @@ namespace NetworkCamera.Wpf.Internal
     /// One-way converter from System.Drawing.Bitmap to System.Windows.Media.ImageSource
     /// </summary>
     [ValueConversion(typeof(Bitmap), typeof(System.Windows.Media.ImageSource))]
-    internal class ImageConverter : BaseConverter, IValueConverter
+    public class ImageConverter : BaseConverter, IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
