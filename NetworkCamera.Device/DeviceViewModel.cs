@@ -42,10 +42,11 @@ namespace NetworkCamera.Device
         private readonly InferenceServer _inferenceServer;
         private DeviceFactory _factory;
         private bool _checkAll;
-        private Bitmap _bitmap;
         private Filter _filter;
         private DateTime _timestamp;
         private bool _isSelected;
+        private Bitmap _bitmap;
+        private Bitmap _croppedBitmap;
 
         public DeviceViewModel(
             DevicesViewModel devicesViewModel,
@@ -121,6 +122,12 @@ namespace NetworkCamera.Device
         {
             get => _bitmap;
             set => Set(ref _bitmap, value);
+        }
+
+        public Bitmap CroppedBitmap
+        {
+            get => _croppedBitmap;
+            set => Set(ref _croppedBitmap, value);
         }
 
         public Rectangle Crop
@@ -302,8 +309,8 @@ namespace NetworkCamera.Device
                 crop = rect;
             }
 
-            BitmapData bData = bitmap.LockBits(crop, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-            OpenCvSharp.Mat frame = new OpenCvSharp.Mat(crop.Height, crop.Width, OpenCvSharp.MatType.CV_8UC3, bData.Scan0, bData.Stride);
+            BitmapData cropData = bitmap.LockBits(crop, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+            OpenCvSharp.Mat frame = new OpenCvSharp.Mat(crop.Height, crop.Width, OpenCvSharp.MatType.CV_8UC3, cropData.Scan0, cropData.Stride);
             Debug.Assert(_filter != null);
             _filter.ProcessFrame(frame).Wait();
             if (Model.OnscreenInfo)
@@ -314,8 +321,9 @@ namespace NetworkCamera.Device
             }
 
             frame.Dispose();
-            bitmap.UnlockBits(bData);
+            bitmap.UnlockBits(cropData);
             Bitmap = bitmap.Clone(rect, bitmap.PixelFormat);
+            CroppedBitmap = bitmap.Clone(crop, bitmap.PixelFormat);
         }
     }
 }

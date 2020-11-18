@@ -24,7 +24,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Image
-                        Source="{Binding Bitmap, Converter={core:ImageConverter}}"
+                        Source="{Binding CroppedBitmap, Converter={core:ImageConverter}}"
                         ToolTip="{Binding Model.Name}"                        
                         Width="320">
                         <Image.InputBindings>
