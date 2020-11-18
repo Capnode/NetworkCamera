@@ -103,7 +103,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NetworkCamera.Core\NetworkCamera.Core.csproj" />
+    <ProjectReference Include="..\NetworkCamera.Device\NetworkCamera.Device.csproj" />
     <ProjectReference Include="..\NetworkCamera.Main\NetworkCamera.Main.csproj" />
+    <ProjectReference Include="..\NetworkCamera.Service\NetworkCamera.Service.csproj" />
     <ProjectReference Include="..\NetworkCamera.Setting\NetworkCamera.Setting.csproj" />
   </ItemGroup>
 
