@@ -269,8 +269,8 @@ namespace NetworkCamera.Service.Inference
 
         private static RectangleF ToRectancle(float left, float top, float right, float bottom)
         {
-            Debug.Assert(left <= right);
-            Debug.Assert(top <= bottom);
+            right = Math.Max(left, right);
+            bottom = Math.Max(top, bottom);
             return new RectangleF(left, top, right - left, bottom - top);
         }
     }
