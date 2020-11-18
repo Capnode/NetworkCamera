@@ -23,7 +23,10 @@
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Image Source="{Binding Bitmap, Converter={core:ImageConverter}}" Width="320">
+                    <Image
+                        Source="{Binding Bitmap, Converter={core:ImageConverter}}"
+                        ToolTip="{Binding Model.Name}"                        
+                        Width="320">
                         <Image.InputBindings>
                             <MouseBinding
                                 MouseAction="LeftDoubleClick"
