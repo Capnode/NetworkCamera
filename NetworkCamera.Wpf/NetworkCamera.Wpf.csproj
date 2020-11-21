@@ -23,8 +23,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
     <CodeAnalysisRuleSet />
-  </PropertyGroup>
-
+    <NoWarn>NU1701;NU1702</NoWarn>  </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\Add.png" />
     <None Remove="Resources\AddList.png" />
