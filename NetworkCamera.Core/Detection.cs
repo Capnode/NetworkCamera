@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+using System;
 using System.Drawing;
 
 namespace NetworkCamera.Core
@@ -32,5 +33,12 @@ namespace NetworkCamera.Core
         /// The bounding box
         /// </summary>
         public RectangleF Box { get; set; }
+
+        public static RectangleF ToRectangle(float left, float top, float right, float bottom)
+        {
+            right = Math.Max(left, right);
+            bottom = Math.Max(top, bottom);
+            return new RectangleF(left, top, right - left, bottom - top);
+        }
     }
 }

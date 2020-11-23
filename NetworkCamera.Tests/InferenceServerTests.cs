@@ -59,10 +59,18 @@ namespace NetworkCamera.Tests.Service
         }
 
         [TestMethod()]
-        [ExpectedException(typeof(ArgumentNullException))]
         public async Task ConnectWithEmptyHost()
         {
+            // Arrange
+            using var bmp = new Bitmap(_imageFile);
+
+            // Act
             await _dut.Start(string.Empty, _modelName, _labelFile).ConfigureAwait(false);
+            IEnumerable<Detection> detections = await _dut.Predict(bmp).ConfigureAwait(false);
+            await _dut.Disconnect().ConfigureAwait(false);
+
+            // Assert
+            Assert.AreEqual(0, detections.Count());
         }
 
         [TestMethod()]

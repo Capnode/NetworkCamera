@@ -64,28 +64,48 @@ namespace NetworkCamera.Service.Inference
 
         public async Task Start(string host, string model, string labels, float limit = 0, string certificate = null)
         {
-            if (string.IsNullOrEmpty(host)) throw new ArgumentNullException(nameof(host));
             if (string.IsNullOrEmpty(model)) throw new ArgumentNullException(nameof(model));
 
             _model = model;
             _labels = ReadLabels(labels);
             _limit = limit;
 
-            ChannelCredentials channelCredentials =
-                certificate == default ? ChannelCredentials.Insecure : new SslCredentials(certificate);
-            _channel = new Channel(host, channelCredentials);
-            DateTime deadline = DateTime.Now.AddSeconds(10).ToUniversalTime();
-            await _channel.ConnectAsync(deadline).ConfigureAwait(false);
-            _client = new PredictionServiceClient(_channel);
+            if (string.IsNullOrEmpty(host))
+            {
+            }
+            else
+            {
+                ChannelCredentials channelCredentials =
+                    certificate == default ? ChannelCredentials.Insecure : new SslCredentials(certificate);
+                _channel = new Channel(host, channelCredentials);
+                DateTime deadline = DateTime.Now.AddSeconds(10).ToUniversalTime();
+                await _channel.ConnectAsync(deadline).ConfigureAwait(false);
+                _client = new PredictionServiceClient(_channel);
+            }
         }
 
         public async Task Disconnect()
         {
-            await _channel.ShutdownAsync().ConfigureAwait(false);
-            _client = null;
+            if (_client != null)
+            {
+                await _channel.ShutdownAsync().ConfigureAwait(false);
+                _client = null;
+            }
         }
 
         public async Task<IEnumerable<Detection>> Predict(Bitmap bmp)
+        {
+            if (_client != null)
+            {
+                return await PredictRemote(bmp).ConfigureAwait(false);
+            }
+            else
+            {
+                return Enumerable.Empty<Detection>();
+            }
+        }
+
+        public async Task<IEnumerable<Detection>> PredictRemote(Bitmap bmp)
         {
             // Desired image format
             const int channels = 3;
@@ -107,7 +127,7 @@ namespace NetworkCamera.Service.Inference
             var proto = new TensorProto
             {
                 TensorShape = shape,
-                Dtype = DataType.DtUint8,
+                Dtype = Tensorflow.DataType.DtUint8,
                 TensorContent = ToByteString(bmp, channels, width, height, format)
             };
 
@@ -224,7 +244,7 @@ namespace NetworkCamera.Service.Inference
                 {
                     Label = ToLabel(classes[i]),
                     Score = score,
-                    Box = ToRectancle(
+                    Box = Detection.ToRectangle(
                         top : boxes[4 * i],
                         left : boxes[4 * i + 1],
                         bottom : boxes[4 * i + 2],
@@ -244,13 +264,6 @@ namespace NetworkCamera.Service.Inference
             }
 
             return label;
-        }
-
-        private static RectangleF ToRectancle(float left, float top, float right, float bottom)
-        {
-            right = Math.Max(left, right);
-            bottom = Math.Max(top, bottom);
-            return new RectangleF(left, top, right - left, bottom - top);
         }
     }
 }

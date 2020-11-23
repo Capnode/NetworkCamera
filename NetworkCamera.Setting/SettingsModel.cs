@@ -35,21 +35,21 @@ namespace NetworkCamera.Setting
         [ReadOnly(true)]
         public string ProgramFiles { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
 
-        [Category("External")]
+        [Category("Inference")]
         [DisplayName("Inference server")]
         [Description("Tensorflow gRPC Inference server. Format <ip>:<port> ie: 192.168.1.100:8501")]
         [Browsable(true)]
         [ReadOnly(false)]
         public string InferenceServer { get; set; }
 
-        [Category("External")]
+        [Category("Inference")]
         [DisplayName("Inference model")]
         [Description("Tensorflow gRPC Inference model name.")]
         [Browsable(true)]
         [ReadOnly(false)]
         public string InferenceModel { get; set; }
 
-        [Category("External")]
+        [Category("Inference")]
         [DisplayName("Inference labels")]
         [Description("Tensorflow gRPC Inference labels file.")]
         [Browsable(true)]
