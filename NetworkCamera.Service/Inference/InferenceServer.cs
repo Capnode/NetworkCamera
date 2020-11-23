@@ -64,11 +64,12 @@ namespace NetworkCamera.Service.Inference
 
         public async Task Start(string host, string model, string labels, float limit = 0, string certificate = null)
         {
-            if (string.IsNullOrEmpty(model)) throw new ArgumentNullException(nameof(model));
-
             _model = model;
-            _labels = ReadLabels(labels);
             _limit = limit;
+            if (!string.IsNullOrEmpty(labels))
+            {
+                _labels = ReadLabels(labels);
+            }
 
             if (string.IsNullOrEmpty(host))
             {
