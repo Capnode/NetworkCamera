@@ -183,17 +183,12 @@ namespace NetworkCamera.Main
         private async Task StartServices()
         {
             // Start services
-            if (!string.IsNullOrEmpty(SettingsViewModel.Model.InferenceServer))
-            {
-                await _inferenceServer.Start(
-                    SettingsViewModel.Model.InferenceServer,
-                    SettingsViewModel.Model.InferenceModel,
-                    SettingsViewModel.Model.InferenceLabels,
-                    SettingsModel.InferenceLimit)
-                    .ConfigureAwait(false);
-            }
-
-            await Task.CompletedTask.ConfigureAwait(false);
+            await _inferenceServer.Start(
+                SettingsViewModel.Model.InferenceServer,
+                SettingsViewModel.Model.InferenceModel,
+                SettingsViewModel.Model.InferenceLabels,
+                SettingsModel.InferenceLimit)
+                .ConfigureAwait(false);
         }
 
         private static void CopyDirectory(string sourceDir, string destDir, bool overwiteFiles)
