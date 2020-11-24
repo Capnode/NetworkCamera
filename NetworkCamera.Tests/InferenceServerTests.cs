@@ -30,8 +30,8 @@ namespace NetworkCamera.Tests.Service
         private const string _host ="172.25.75.141:9001";
         private const string _imageFile = @"TestData/grace_hopper_300x300.bmp";
         private const string _largeImageFile = @"TestData/grace_hopper.bmp";
-        private const string _modelName = InferenceServer.SsdMobilenetV2Model;
-        private const string _labelFile = InferenceServer.SsdMobilenetV2Labels;
+        private const string _modelName = @"testdata/ssdlite-mobilenet-v2-tpu";
+        private const string _labelFile = @"AppData/coco_labels.txt";
 
         private InferenceServer _dut;
 
@@ -87,7 +87,7 @@ namespace NetworkCamera.Tests.Service
             LogDetections(detections);
 
             // Assert
-            Assert.AreEqual(20, results.Length);
+            Assert.AreEqual(50, results.Length);
 
             Detection result = results[0];
             Assert.AreEqual("person", result.Label);
@@ -115,7 +115,7 @@ namespace NetworkCamera.Tests.Service
             LogDetections(detections);
 
             // Assert
-            Assert.AreEqual(20, results.Length);
+            Assert.AreEqual(50, results.Length);
 
             Detection result = results[0];
             Assert.AreEqual("person", result.Label);

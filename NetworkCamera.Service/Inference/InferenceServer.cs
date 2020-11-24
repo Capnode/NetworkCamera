@@ -33,8 +33,6 @@ namespace NetworkCamera.Service.Inference
 {
     public class InferenceServer : IDisposable
     {
-        public const string SsdMobilenetV2Labels = @"AppData/coco_labels.txt";
-        public const string SsdMobilenetV2Model = @"testdata/ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite";
         private static readonly char[] _whitespace = new char[] { ' ', '\t' };
 
         private volatile PredictionServiceClient _client;
