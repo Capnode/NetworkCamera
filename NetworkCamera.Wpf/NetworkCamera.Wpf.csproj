@@ -8,11 +8,18 @@
     <ApplicationIcon>Resources\NetcamIcon.ico</ApplicationIcon>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
-    <Platforms>AnyCPU</Platforms>
+    <Platforms>AnyCPU;x64</Platforms>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <CodeAnalysisRuleSet />
+    <NoWarn>NU1701;NU1702</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
     <CodeAnalysisRuleSet />
@@ -24,6 +31,13 @@
     <WarningsAsErrors />
     <CodeAnalysisRuleSet />
     <NoWarn>NU1701;NU1702</NoWarn>  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <CodeAnalysisRuleSet />
+    <NoWarn>NU1701;NU1702</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\Add.png" />
     <None Remove="Resources\AddList.png" />
