@@ -38,6 +38,7 @@ namespace NetworkCamera.Device.Core
         private bool _disposed;
         private readonly DeviceModel _device;
         private readonly InferenceServer _inferenceServer;
+        private readonly IInferenceChannel _inferenceChannel;
         private readonly BackgroundSubtractorMOG2 _segmentor;
         private int _index;
         private DateTime _postEventTime;
@@ -46,6 +47,7 @@ namespace NetworkCamera.Device.Core
         {
             _device = device;
             _inferenceServer = inferenceServer;
+            _inferenceChannel = inferenceServer.CreateChannel();
             _segmentor = BackgroundSubtractorMOG2.Create(500, 16, true);
         }
 
@@ -65,7 +67,7 @@ namespace NetworkCamera.Device.Core
             }
 
             IEnumerable<Classification> classifications = Enumerable.Empty<Classification>();
-            if (_device.ObjectDetection)
+            if (_device.ObjectDetection && _inferenceChannel != null)
             {
                 classifications = await PredictFrameAsync(frame).ConfigureAwait(false);
                 if (!classifications.Any()) return;
@@ -127,7 +129,7 @@ namespace NetworkCamera.Device.Core
         {
             Mat crop = frame.Clone();
             System.Drawing.Bitmap bitmap = crop.ToBitmap();
-            var results = await _inferenceServer.Predict(bitmap).ConfigureAwait(false);
+            var results = await _inferenceChannel.Predict(bitmap).ConfigureAwait(false);
             var classifications = new List<Classification>();
             foreach (var result in results)
             {
@@ -135,7 +137,7 @@ namespace NetworkCamera.Device.Core
                 int y0 = (int)(frame.Height * result.Box.Y);
                 int width = (int)(frame.Width * result.Box.Width);
                 int height = (int)(frame.Height * result.Box.Height);
-//                Log.Verbose($"{result.Label} {result.Score:0.####} W:{width} H:{height}");
+                //                Log.Verbose($"{result.Label} {result.Score:0.####} W:{width} H:{height}");
 
                 var classification = new Classification
                 {
@@ -143,7 +145,7 @@ namespace NetworkCamera.Device.Core
                     Score = result.Score,
                     Rectangle = new Rect(x0, y0, width, height),
                 };
-               classifications.Add(classification);
+                classifications.Add(classification);
             }
 
             return classifications;
@@ -228,6 +230,7 @@ namespace NetworkCamera.Device.Core
                 if (disposing)
                 {
                     _segmentor.Dispose();
+                    _inferenceChannel.Dispose();
                 }
 
                 _disposed = true;

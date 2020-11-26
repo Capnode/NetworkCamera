@@ -37,18 +37,30 @@ namespace NetworkCamera.Service.Inference
 
         private volatile PredictionServiceClient _client;
         private Channel _channel;
+        private string _host;
         private string _model;
         private IDictionary<int, string> _labels;
-        private float _limit;
 
         public InferenceServer()
         {
         }
 
+        public float Limit { get; private set; }
+
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public IInferenceChannel CreateChannel()
+        {
+            if (string.IsNullOrEmpty(_host))
+            {
+                return null;
+            }
+
+            return new RemoteChannel(this);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -62,17 +74,15 @@ namespace NetworkCamera.Service.Inference
 
         public async Task Start(string host, string model, string labels, float limit = 0, string certificate = null)
         {
+            _host = host;
             _model = model;
-            _limit = limit;
+            Limit = limit;
             if (!string.IsNullOrEmpty(labels))
             {
                 _labels = ReadLabels(labels);
             }
 
-            if (string.IsNullOrEmpty(host))
-            {
-            }
-            else
+            if (!string.IsNullOrEmpty(host))
             {
                 ChannelCredentials channelCredentials =
                     certificate == default ? ChannelCredentials.Insecure : new SslCredentials(certificate);
@@ -237,7 +247,7 @@ namespace NetworkCamera.Service.Inference
             for (int i = 0; i < size; i++)
             {
                 float score = scores[i];
-                if (score < _limit) continue;
+                if (score < Limit) continue;
 
                 var detection = new Detection
                 {
