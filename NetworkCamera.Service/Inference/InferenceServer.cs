@@ -12,9 +12,11 @@
  * limitations under the License.
  */
 
+using GalaSoft.MvvmLight.Messaging;
 using Google.Protobuf;
 using Grpc.Core;
 using NetworkCamera.Core;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -84,12 +86,22 @@ namespace NetworkCamera.Service.Inference
 
             if (!string.IsNullOrEmpty(host))
             {
-                ChannelCredentials channelCredentials =
-                    certificate == default ? ChannelCredentials.Insecure : new SslCredentials(certificate);
-                _channel = new Channel(host, channelCredentials);
-                DateTime deadline = DateTime.Now.AddSeconds(10).ToUniversalTime();
-                await _channel.ConnectAsync(deadline).ConfigureAwait(false);
-                _client = new PredictionServiceClient(_channel);
+                try
+                {
+                    ChannelCredentials channelCredentials =
+                        certificate == default ? ChannelCredentials.Insecure : new SslCredentials(certificate);
+                    _channel = new Channel(host, channelCredentials);
+                    DateTime deadline = DateTime.Now.AddSeconds(5).ToUniversalTime();
+                    await _channel.ConnectAsync(deadline).ConfigureAwait(false);
+                    _client = new PredictionServiceClient(_channel);
+                }
+                catch (Exception ex)
+                {
+                    string message = $"{ex.Message} ({ex.GetType()})";
+                    Messenger.Default.Send(new NotificationMessage(message));
+                    Log.Error(ex, message);
+                    _client = null;
+                }
             }
         }
 
@@ -104,18 +116,8 @@ namespace NetworkCamera.Service.Inference
 
         public async Task<IEnumerable<Detection>> Predict(Bitmap bmp)
         {
-            if (_client != null)
-            {
-                return await PredictRemote(bmp).ConfigureAwait(false);
-            }
-            else
-            {
-                return Enumerable.Empty<Detection>();
-            }
-        }
+            if (_client == null) throw new ApplicationException(nameof(_client));
 
-        public async Task<IEnumerable<Detection>> PredictRemote(Bitmap bmp)
-        {
             // Desired image format
             const int channels = 3;
             const int width = 300;
