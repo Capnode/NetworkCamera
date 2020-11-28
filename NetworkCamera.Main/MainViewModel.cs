@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
@@ -183,7 +184,11 @@ namespace NetworkCamera.Main
         private async Task StartServices()
         {
             // Start services
-            if (!float.TryParse(SettingsViewModel.Model.InferenceLimit, out float limit))
+            if (!float.TryParse(
+                SettingsViewModel.Model.InferenceLimit,
+                NumberStyles.Float,
+                CultureInfo.InvariantCulture,
+                out float limit))
             {
                 limit = 0f;
             }
