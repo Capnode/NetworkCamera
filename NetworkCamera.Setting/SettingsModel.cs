@@ -19,7 +19,7 @@ namespace NetworkCamera.Setting
 {
     public class SettingsModel
     {
-        public static float InferenceLimit => 0.5f;
+        private const string _inferenceLimit = "0.5";
 
         [Category("Program")]
         [DisplayName("ApplicationData")]
@@ -56,6 +56,13 @@ namespace NetworkCamera.Setting
         [ReadOnly(false)]
         public string InferenceLabels { get; set; }
 
+        [Category("Inference")]
+        [DisplayName("Inference limit")]
+        [Description("Inference limit threshold, value in range 0.0 to 1.0.")]
+        [Browsable(true)]
+        [ReadOnly(false)]
+        public string InferenceLimit { get; set; } = _inferenceLimit;
+
         public void Copy(SettingsModel oldSettings)
         {
             if (oldSettings == null) return;
@@ -64,6 +71,7 @@ namespace NetworkCamera.Setting
             InferenceServer = oldSettings.InferenceServer;
             InferenceModel = oldSettings.InferenceModel;
             InferenceLabels = oldSettings.InferenceLabels;
+            InferenceLimit = oldSettings.InferenceLimit;
         }
 
         public SettingsModel Clone()
@@ -73,7 +81,8 @@ namespace NetworkCamera.Setting
                 AppData = AppData,
                 InferenceServer = InferenceServer,
                 InferenceModel = InferenceModel,
-                InferenceLabels = InferenceLabels
+                InferenceLabels = InferenceLabels,
+                InferenceLimit = InferenceLimit
             };
         }
     }

@@ -183,11 +183,16 @@ namespace NetworkCamera.Main
         private async Task StartServices()
         {
             // Start services
+            if (!float.TryParse(SettingsViewModel.Model.InferenceLimit, out float limit))
+            {
+                limit = 0f;
+            }
+
             await _inferenceServer.Start(
                 SettingsViewModel.Model.InferenceServer,
                 SettingsViewModel.Model.InferenceModel,
                 SettingsViewModel.Model.InferenceLabels,
-                SettingsModel.InferenceLimit)
+                limit)
                 .ConfigureAwait(false);
         }
 
