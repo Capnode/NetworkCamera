@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net5.0-windows</TargetFramework>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 

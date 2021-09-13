@@ -7,7 +7,6 @@
     <StartupObject>NetworkCamera.Wpf.App</StartupObject>
     <ApplicationIcon>Resources\NetcamIcon.ico</ApplicationIcon>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
     <Platforms>AnyCPU;x64</Platforms>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>

@@ -4,8 +4,6 @@
     <TargetFramework>net5.0-windows</TargetFramework>
 	  <UseWpf>true</UseWpf>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
-    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 

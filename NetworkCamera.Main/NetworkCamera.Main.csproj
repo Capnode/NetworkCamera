@@ -9,7 +9,6 @@
     <Company>Capnode AB</Company>
     <Version>1.2.0</Version>
     <Authors>Capnode AB</Authors>
-    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
     <Platforms>AnyCPU;x64</Platforms>
     <AssemblyVersion>1.2.0.0</AssemblyVersion>
     <FileVersion>1.2.0.0</FileVersion>
