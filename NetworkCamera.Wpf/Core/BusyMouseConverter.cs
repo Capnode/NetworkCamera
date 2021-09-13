@@ -64,18 +64,6 @@ namespace NetworkCamera.Wpf.Core
             object parameter,
             System.Globalization.CultureInfo culture)
         {
-            if (value is Cursors)
-            {
-                if (value == Cursors.Wait)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
             return null;
         }
     }

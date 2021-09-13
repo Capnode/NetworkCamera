@@ -34,7 +34,8 @@ namespace NetworkCamera.Main
                     }
                 }
 
-                return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().CodeBase);
+                var assembly = Assembly.GetExecutingAssembly();
+                return System.IO.Path.GetFileNameWithoutExtension(assembly.Location);
             }
         }
 

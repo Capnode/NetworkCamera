@@ -1,0 +1,8 @@
+{
+  "AppData": "C:\\Users\\carlcn\\AppData\\Roaming",
+  "ProgramFiles": "C:\\Program Files",
+  "InferenceServer": "172.25.75.141:9001",
+  "InferenceModel": "testdata/ssdlite-mobilenet-v2-tpu",
+  "InferenceLabels": "coco_labels.txt",
+  "InferenceLimit": "0.5"
+}

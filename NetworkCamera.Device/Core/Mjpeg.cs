@@ -59,7 +59,6 @@ namespace NetworkCamera.Device.Core
             if (device == null) throw new ArgumentNullException(nameof(device));
             if (string.IsNullOrWhiteSpace(device.Source)) throw new ArgumentException(nameof(device.Source));
             if (deviceEvent == null) throw new ArgumentNullException(nameof(deviceEvent));
-            if (token == null) throw new ArgumentNullException(nameof(token));
 
             try
             {
