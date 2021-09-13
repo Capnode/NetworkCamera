@@ -13,6 +13,7 @@
  */
 
 using NetworkCamera.Core;
+using NetworkCamera.Core.Support;
 using NetworkCamera.Device.Core;
 using System.ComponentModel;
 using System.Drawing;
@@ -98,6 +99,7 @@ namespace NetworkCamera.Device
         [Category("Export")]
         [DisplayName("Folder")]
         [Description("File export folder")]
+        [Editor(typeof(FolderEditor), typeof(FolderEditor))]
         [Browsable(true)]
         [ReadOnly(false)]
         public string Folder { get; set; }

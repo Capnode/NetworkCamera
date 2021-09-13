@@ -13,13 +13,6 @@
     d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
-        <DataTemplate x:Key="FilenameEditor">
-            <core:FilenameEditor Filename="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        </DataTemplate>
-        <DataTemplate x:Key="FolderEditor">
-            <core:FolderEditor Folder="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        </DataTemplate>
-
         <ObjectDataProvider
             x:Key="settings"
             ObjectInstance="{x:Static properties:Settings.Default}"/>
@@ -125,9 +118,6 @@
                                 ShowAdvancedOptions="False"
                                 ShowSortOptions="False"
                                 SelectedObject="{Binding Model}">
-                                <xctk:PropertyGrid.EditorDefinitions>
-                                    <xctk:EditorTemplateDefinition TargetProperties="Folder" EditingTemplate="{StaticResource FolderEditor}" />
-                                </xctk:PropertyGrid.EditorDefinitions>
                             </xctk:PropertyGrid>
                         </TabItem>
                     </TabControl>
