@@ -12,28 +12,24 @@
  * limitations under the License.
  */
 
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using NetworkCamera.Core;
 using NetworkCamera.Device.Core;
-using NetworkCamera.Device.Properties;
 using NetworkCamera.Service.Inference;
 using NetworkCamera.Setting;
 using Serilog;
 using System;
-using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
 namespace NetworkCamera.Device
 {
-    public class DeviceViewModel : ViewModelBase, ITreeViewModel, IDisposable
+    public class DeviceViewModel : ObservableRecipient, ITreeViewModel, IDisposable
     {
         private bool _isDisposed; // To detect redundant calls
         private readonly DevicesViewModel _parent;
@@ -82,7 +78,7 @@ namespace NetworkCamera.Device
         public bool IsSelected
         {
             get => _isSelected;
-            set => Set(ref _isSelected, value);
+            set => SetProperty(ref _isSelected, value);
         }
 
         public bool Active
@@ -91,17 +87,17 @@ namespace NetworkCamera.Device
             set
             {
                 Model.Active = value;
-                RaisePropertyChanged(() => Active);
+                OnPropertyChanged();
 
                 // Run in UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    StartCommand.RaiseCanExecuteChanged();
-                    StopCommand.RaiseCanExecuteChanged();
-                    DeleteCommand.RaiseCanExecuteChanged();
+                    StartCommand.NotifyCanExecuteChanged();
+                    StopCommand.NotifyCanExecuteChanged();
+                    DeleteCommand.NotifyCanExecuteChanged();
 
                     // Notify MainView about changed device
-                    Messenger.Default.Send(new DeviceMessage());
+                    Messenger.Send(new DeviceMessage(), 0);
                 });
             }
         }
@@ -109,25 +105,25 @@ namespace NetworkCamera.Device
         public DeviceModel Model
         {
             get => _model;
-            set => Set(ref _model, value);
+            set => SetProperty(ref _model, value);
         }
 
         public bool CheckAll
         {
             get => _checkAll;
-            set => Set(ref _checkAll, value);
+            set => SetProperty(ref _checkAll, value);
         }
 
         public Bitmap Bitmap
         {
             get => _bitmap;
-            set => Set(ref _bitmap, value);
+            set => SetProperty(ref _bitmap, value);
         }
 
         public Bitmap CroppedBitmap
         {
             get => _croppedBitmap;
-            set => Set(ref _croppedBitmap, value);
+            set => SetProperty(ref _croppedBitmap, value);
         }
 
         public Rectangle Crop
@@ -136,7 +132,7 @@ namespace NetworkCamera.Device
             set
             {
                 Model.Crop = value;
-                base.RaisePropertyChanged(() => Crop);
+                OnPropertyChanged();
             }
         }
 
@@ -161,7 +157,7 @@ namespace NetworkCamera.Device
             try
             {
                 await RunModel().ConfigureAwait(false);
-                Messenger.Default.Send(new NotificationMessage(string.Empty));
+                Messenger.Send(new NotificationMessage(string.Empty), 0);
             }
             catch (AggregateException aex)
             {
@@ -177,7 +173,7 @@ namespace NetworkCamera.Device
                     message = $"Device {Model.Name}: {aex.GetType()} See log for details";
                 }
 
-                Messenger.Default.Send(new NotificationMessage(message));
+                Messenger.Send(new NotificationMessage(message), 0);
                 Model.Active = false;
                 DataFromModel();
             }
@@ -185,7 +181,7 @@ namespace NetworkCamera.Device
             {
                 string message = $"Device {Model.Name}: {ex.Message} ({ex.GetType()})";
                 Log.Error(ex, message);
-                Messenger.Default.Send(new NotificationMessage(message));
+                Messenger.Send(new NotificationMessage(message), 0);
                 Model.Active = false;
                 DataFromModel();
             }

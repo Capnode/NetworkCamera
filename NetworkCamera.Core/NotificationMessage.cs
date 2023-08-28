@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2018 Capnode AB
+ * Copyright 2023 Capnode AB
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License.
@@ -12,15 +12,15 @@
  * limitations under the License.
  */
 
-using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 
 namespace NetworkCamera.Core
 {
-    public interface ITreeViewModel
+    // A sample request message to get the current username
+    public class NotificationMessage : ValueChangedMessage<string>
     {
-        RelayCommand DeleteCommand { get; }
-        RelayCommand StartCommand { get; }
-        RelayCommand StopCommand { get; }
-        void Refresh();
+        public NotificationMessage(string message) : base(message)
+        {
+        }
     }
 }

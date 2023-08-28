@@ -17,9 +17,10 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using NetworkCamera.Core;
 using NetworkCamera.Device;
 using NetworkCamera.Service.Inference;
 using NetworkCamera.Setting;
@@ -30,7 +31,7 @@ namespace NetworkCamera.Main
     /// <summary>
     /// This class contains properties that the main View can data bind to.
     /// </summary>
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : ObservableRecipient
     {
         private bool _isBusy;
         private string _statusMessage;
@@ -56,8 +57,8 @@ namespace NetworkCamera.Main
 
             SaveCommand = new RelayCommand(() => SaveAll(), () => !IsBusy);
             ShowDeviceCommand = new RelayCommand(() => OnShowDevice(), () => !IsBusy);
-            Messenger.Default.Register<NotificationMessage>(this, OnStatusMessage);
-            Messenger.Default.Register<DeviceMessage>(this, OnDeviceMessage);
+            WeakReferenceMessenger.Default.Register<MainViewModel, NotificationMessage, int>(this, 0, static (r, m) => r.OnStatusMessage(m));
+            WeakReferenceMessenger.Default.Register<MainViewModel, DeviceMessage, int>(this, 0, static (r, m) => r.OnDeviceMessage(m));
 
             _startupTask = StartupAsync();
         }
@@ -77,25 +78,25 @@ namespace NetworkCamera.Main
         public bool IsBusy
         {
             get => _isBusy;
-            set => Set(ref _isBusy, value);
+            set => SetProperty(ref _isBusy, value);
         }
 
         public string StatusMessage
         {
             get => _statusMessage;
-            set => Set(ref _statusMessage, value);
+            set => SetProperty(ref _statusMessage, value);
         }
 
         public bool OverviewTabSelected
         {
             get => _overviewTabSelected;
-            set => Set(ref _overviewTabSelected, value);
+            set => SetProperty(ref _overviewTabSelected, value);
         }
 
         public bool DevicesTabSelected
         {
             get => _devicesTabSelected;
-            set => Set(ref _devicesTabSelected, value);
+            set => SetProperty(ref _devicesTabSelected, value);
         }
 
         public void SaveAll()
@@ -106,7 +107,7 @@ namespace NetworkCamera.Main
 
         private void OnStatusMessage(NotificationMessage message)
         {
-            StatusMessage = message.Notification;
+            StatusMessage = message.Value;
         }
 
         private void OnDeviceMessage(DeviceMessage message)
@@ -133,12 +134,12 @@ namespace NetworkCamera.Main
             {
                 // Read configuration
                 await ReadConfig().ConfigureAwait(false);
-                Messenger.Default.Send(new NotificationMessage("Ready"));
+                Messenger.Send(new NotificationMessage("Ready"), 0);
             }
             catch (Exception ex)
             {
                 string message = $"{ex.Message} ({ex.GetType()})";
-                Messenger.Default.Send(new NotificationMessage(message));
+                Messenger.Send(new NotificationMessage(message), 0);
                 Log.Error(ex, message);
             }
         }
@@ -201,12 +202,12 @@ namespace NetworkCamera.Main
                 .ConfigureAwait(false);
         }
 
-        private static void CopyDirectory(string sourceDir, string destDir, bool overwiteFiles)
+        private void CopyDirectory(string sourceDir, string destDir, bool overwiteFiles)
         {
             if (!Directory.Exists(sourceDir))
             {
                 string message = $"Source directory {sourceDir} does not exist";
-                Messenger.Default.Send(new NotificationMessage(message));
+                Messenger.Send(new NotificationMessage(message), 0);
                 Log.Error(message);
                 return;
             }

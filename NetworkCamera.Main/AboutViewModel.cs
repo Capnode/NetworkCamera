@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-using GalaSoft.MvvmLight;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Globalization;
 using System.IO;
@@ -20,7 +20,7 @@ using System.Reflection;
 
 namespace NetworkCamera.Main
 {
-    public class AboutViewModel : ViewModelBase
+    public class AboutViewModel : ObservableRecipient
     {
         public string Title { get; private set; }
         public string ProductName { get; private set; }

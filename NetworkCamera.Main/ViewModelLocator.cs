@@ -26,10 +26,11 @@
   See http://www.galasoft.ch/mvvm
 */
 
-using GalaSoft.MvvmLight.Ioc;
 using NetworkCamera.Device;
 using NetworkCamera.Setting;
 using NetworkCamera.Service.Inference;
+using Microsoft.Extensions.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace NetworkCamera.Main
 {
@@ -46,19 +47,21 @@ namespace NetworkCamera.Main
         public ViewModelLocator()
         {
             // Register types
-            SimpleIoc.Default.Register<InferenceServer>();
-            SimpleIoc.Default.Register<SettingsModel>();
-            SimpleIoc.Default.Register<MainViewModel>();
-            SimpleIoc.Default.Register<SettingsViewModel>();
-            SimpleIoc.Default.Register<AboutViewModel>();
-            SimpleIoc.Default.Register<DevicesViewModel>();
-            SimpleIoc.Default.Register<DevicesModel>();
+            var services = new ServiceCollection();
+            services.AddSingleton<InferenceServer>();
+            services.AddSingleton<SettingsModel>();
+            services.AddSingleton<MainViewModel>();
+            services.AddSingleton<SettingsViewModel>();
+            services.AddSingleton<AboutViewModel>();
+            services.AddSingleton<DevicesViewModel>();
+            services.AddSingleton<DevicesModel>();
+            Ioc.Default.ConfigureServices(services.BuildServiceProvider());
         }
 
-        public static MainViewModel MainViewModel => SimpleIoc.Default.GetInstance<MainViewModel>();
-        public static SettingsViewModel SettingsViewModel => SimpleIoc.Default.GetInstance<SettingsViewModel>();
-        public static AboutViewModel AboutViewModel => SimpleIoc.Default.GetInstance<AboutViewModel>();
-        public static DevicesViewModel DevicesViewModel => SimpleIoc.Default.GetInstance<DevicesViewModel>();
+        public static MainViewModel MainViewModel => Ioc.Default.GetService<MainViewModel>();
+        public static SettingsViewModel SettingsViewModel => Ioc.Default.GetService<SettingsViewModel>();
+        public static AboutViewModel AboutViewModel => Ioc.Default.GetService<AboutViewModel>();
+        public static DevicesViewModel DevicesViewModel => Ioc.Default.GetService<DevicesViewModel>();
 
         public static void Cleanup()
         {

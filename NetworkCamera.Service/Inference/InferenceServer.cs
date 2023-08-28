@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-using GalaSoft.MvvmLight.Messaging;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Google.Protobuf;
 using Grpc.Core;
 using NetworkCamera.Core;
@@ -33,7 +33,7 @@ using static Tensorflow.Serving.PredictionService;
 
 namespace NetworkCamera.Service.Inference
 {
-    public class InferenceServer : IDisposable
+    public class InferenceServer : ObservableRecipient, IDisposable
     {
         private static readonly char[] _whitespace = new char[] { ' ', '\t' };
 
@@ -98,7 +98,7 @@ namespace NetworkCamera.Service.Inference
                 catch (Exception ex)
                 {
                     string message = $"{ex.Message} ({ex.GetType()})";
-                    Messenger.Default.Send(new NotificationMessage(message));
+                    Messenger.Send(new NotificationMessage(message), 0);
                     Log.Error(ex, message);
                     _client = null;
                 }

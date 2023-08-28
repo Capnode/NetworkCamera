@@ -12,9 +12,6 @@
  * limitations under the License.
  */
 
-using NetworkCamera.Core;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
 using System.IO;
 using NetworkCamera.Setting;
@@ -22,11 +19,13 @@ using System.Collections.ObjectModel;
 using System;
 using NetworkCamera.Service.Inference;
 using System.Linq;
-using GalaSoft.MvvmLight.Messaging;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace NetworkCamera.Device
 {
-    public class DevicesViewModel : ViewModelBase
+    public class DevicesViewModel : ObservableRecipient
     {
         private readonly SettingsModel _settings;
         private readonly InferenceServer _inferenceServer;
@@ -53,7 +52,7 @@ namespace NetworkCamera.Device
         public bool IsBusy
         {
             get =>_isBusy;
-            set => Set(ref _isBusy, value);
+            set => SetProperty(ref _isBusy, value);
         }
 
         internal bool DoDeleteDevice(DeviceViewModel device)
@@ -112,7 +111,7 @@ namespace NetworkCamera.Device
             }
 
             // Notify MainView about added devices
-            Messenger.Default.Send(new DeviceMessage());
+            Messenger.Send(new DeviceMessage(), 0);
         }
     }
 }
