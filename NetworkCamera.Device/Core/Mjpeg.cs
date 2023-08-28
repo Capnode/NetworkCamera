@@ -24,9 +24,9 @@ namespace NetworkCamera.Device.Core
     using System.Text;
     using System.Threading;
     using System.Net;
-    using System.Globalization;
-    using Serilog;
     using System.Diagnostics;
+    using System.Net.Http;
+    using System.Globalization;
 
     internal class Mjpeg : IDevice
     {
@@ -93,25 +93,20 @@ namespace NetworkCamera.Device.Core
                 // align
                 //  1 = searching for image start
                 //  2 = searching for image end
-                // create request
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(new Uri(device.Source));
 
                 // set login and password
+                using var handler = new HttpClientHandler();
                 if ((device.Login != null) && (device.Password != null) && (!string.IsNullOrEmpty(device.Login)))
                 {
-                    request.Credentials = new NetworkCredential(device.Login, device.Password);
+                    handler.Credentials = new NetworkCredential(device.Login, device.Password);
                 }
 
-                // set connection group name
-                if (_useSeparateConnectionGroup)
-                {                        request.ConnectionGroupName = GetHashCode().ToString(CultureInfo.InvariantCulture);
-                }
-
-                // get response
-                using WebResponse resp = request.GetResponse();
+                using var client = new HttpClient(handler);
+                using var response = client.GetAsync(device.Source, HttpCompletionOption.ResponseHeadersRead, token).Result;
+                response.EnsureSuccessStatusCode();
 
                 // check content type
-                string ct = resp.ContentType;
+                string ct = response.Content.Headers.ContentType.ToString();
                 if (!ct.Contains("multipart/x-mixed-replace"))
                 {
                     throw new ApplicationException($"Invalid content type: {ct}");
@@ -123,7 +118,7 @@ namespace NetworkCamera.Device.Core
                 boundaryLen = boundary.Length;
 
                 // get response stream
-                using Stream stream = resp.GetResponseStream();
+                using Stream stream = client.GetStreamAsync(device.Source).Result;
 
                 // loop
                 while (!token.IsCancellationRequested)
